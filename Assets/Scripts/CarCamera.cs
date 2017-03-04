@@ -5,17 +5,45 @@ using UnityEngine;
 public class CarCamera : MonoBehaviour {
 	public GameObject car;
 	Vector3 localTransform; // position that must be maintained behind car
+	//The following rotates the camera every so often
+	bool changeRotation;
+	float rotateTime;
+	public float rotSpeed; //speed of rotation in degrees per second
 	// Use this for initialization
 	void Start () {
 		localTransform = transform.position - car.transform.position;
+		changeRotation = false;
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		transform.position = car.transform.position - transform.forward * 18 + transform.up * 3;;
-		float tmpRot = (car.transform.localRotation.eulerAngles.y - 90) - transform.localRotation.eulerAngles.y;
-		transform.Rotate (0,tmpRot,0);
+		float carRot = (car.transform.localRotation.eulerAngles.y - 90);
+		if (carRot < 0) {
+			carRot = 360 + carRot;
+		}
+		float myRot = transform.localRotation.eulerAngles.y;
+		float tmpRot = carRot - myRot;
+		/*
+		if (Mathf.Abs (tmpRot) > 180) {
+			tmpRot = (Mathf.Sign (tmpRot) * 360 - tmpRot);
+		}
+		*/
+		if (Mathf.Abs (tmpRot) > 180) {
+			print (tmpRot);
+			tmpRot = Mathf.Sign (tmpRot) * (Mathf.Abs (tmpRot) - 360);
+			print (tmpRot);
+		}
+		//print (carRot + ", " + myRot + ", " + tmpRot);
+		//print (car.transform.localRotation.eulerAngles.y - 90 + ", " + transform.localRotation.eulerAngles.y);
+		/*
+		if (Mathf.Abs (tmpRot) > 180) {
+			tmpRot = Mathf.Sign (tmpRot) * -1 * (Mathf.Abs (tmpRot) - 180);
+		}
+		*/
+		float rotAmount = Mathf.Sign(tmpRot)*Mathf.Min (Mathf.Abs (tmpRot), rotSpeed * Time.deltaTime);
+		transform.Rotate (0,rotAmount,0);
 		transform.eulerAngles = new Vector3 (21, transform.eulerAngles.y, 0);
 	}
 }

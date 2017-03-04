@@ -9,8 +9,10 @@ public class DrivingScript : MonoBehaviour {
 	public float rotateSpeed;
 	float rotateCurrent;
 	float topRotate;
+	float moveDir; //direction of movement (forward/backward for correct driving control)
 	// Use this for initialization
 	void Start () {
+		moveDir = 1;
 		topSpeed = speed;
 		topRotate = rotateSpeed;
 	}
@@ -20,10 +22,12 @@ public class DrivingScript : MonoBehaviour {
 		if (Input.GetKey (KeyCode.W)) {
 			if (speedCurrent != topSpeed) {
 				speedCurrent += Mathf.Min (0.2f * (topSpeed - speedCurrent), 0.5f);
+				moveDir = 1;
 			}
 		} else if (Input.GetKey (KeyCode.S)) {
 			if (speedCurrent != -topSpeed) {
 				speedCurrent += Mathf.Max (0.2f * (-topSpeed - speedCurrent), -0.5f);
+				moveDir = -1;
 			}
 		} else {
 			if (Mathf.Abs(speedCurrent) < 1) {
