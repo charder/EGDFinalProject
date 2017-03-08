@@ -18,18 +18,22 @@ public class CarCamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.position = car.transform.position - transform.forward * 18 + transform.up * 3;;
+		transform.position = car.transform.position - transform.forward * 18 + transform.up * 3;
+		Vector3 newRot = new Vector3 (car.transform.rotation.eulerAngles.x, car.transform.rotation.eulerAngles.y - 90, car.transform.rotation.eulerAngles.z);
+		transform.rotation = Quaternion.RotateTowards (transform.rotation,Quaternion.Euler(newRot), rotSpeed * Time.deltaTime);
+
+		/*
 		float carRot = (car.transform.localRotation.eulerAngles.y - 90);
 		if (carRot < 0) {
 			carRot = 360 + carRot;
 		}
 		float myRot = transform.localRotation.eulerAngles.y;
 		float tmpRot = carRot - myRot;
-		/*
+		
 		if (Mathf.Abs (tmpRot) > 180) {
 			tmpRot = (Mathf.Sign (tmpRot) * 360 - tmpRot);
 		}
-		*/
+		
 		if (Mathf.Abs (tmpRot) > 180) {
 			print (tmpRot);
 			tmpRot = Mathf.Sign (tmpRot) * (Mathf.Abs (tmpRot) - 360);
@@ -37,13 +41,14 @@ public class CarCamera : MonoBehaviour {
 		}
 		//print (carRot + ", " + myRot + ", " + tmpRot);
 		//print (car.transform.localRotation.eulerAngles.y - 90 + ", " + transform.localRotation.eulerAngles.y);
-		/*
+
 		if (Mathf.Abs (tmpRot) > 180) {
 			tmpRot = Mathf.Sign (tmpRot) * -1 * (Mathf.Abs (tmpRot) - 180);
 		}
-		*/
+		
 		float rotAmount = Mathf.Sign(tmpRot)*Mathf.Min (Mathf.Abs (tmpRot), rotSpeed * Time.deltaTime);
 		transform.Rotate (0,rotAmount,0);
+		*/
 		transform.eulerAngles = new Vector3 (21, transform.eulerAngles.y, 0);
 	}
 }
