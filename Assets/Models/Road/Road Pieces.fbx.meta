@@ -1,0 +1,142 @@
+fileFormatVersion: 2
+guid: 7669fef3b7842194fb289e712583d4e4
+timeCreated: 1489005994
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: pCube2
+    100002: pCube3
+    100004: pCube4
+    100006: pCube5
+    100008: pPipe3
+    100010: pPipe4
+    100012: //RootNode
+    100014: SixIncline
+    100016: SixStraight
+    100018: SixTurn
+    100020: transform1
+    100022: transform2
+    100024: transform3
+    100026: transform4
+    100028: transform5
+    100030: transform6
+    100032: TwoIncline
+    100034: TwoIntersection
+    100036: TwoStraight
+    100038: TwoT
+    100040: TwoTurn
+    400000: pCube2
+    400002: pCube3
+    400004: pCube4
+    400006: pCube5
+    400008: pPipe3
+    400010: pPipe4
+    400012: //RootNode
+    400014: SixIncline
+    400016: SixStraight
+    400018: SixTurn
+    400020: transform1
+    400022: transform2
+    400024: transform3
+    400026: transform4
+    400028: transform5
+    400030: transform6
+    400032: TwoIncline
+    400034: TwoIntersection
+    400036: TwoStraight
+    400038: TwoT
+    400040: TwoTurn
+    2300000: SixIncline
+    2300002: SixStraight
+    2300004: SixTurn
+    2300006: TwoIncline
+    2300008: TwoIntersection
+    2300010: TwoStraight
+    2300012: TwoT
+    2300014: TwoTurn
+    3300000: SixIncline
+    3300002: SixStraight
+    3300004: SixTurn
+    3300006: TwoIncline
+    3300008: TwoIntersection
+    3300010: TwoStraight
+    3300012: TwoT
+    3300014: TwoTurn
+    4300000: TwoStraight
+    4300002: TwoIntersection
+    4300004: TwoT
+    4300006: TwoTurn
+    4300008: SixStraight
+    4300010: SixTurn
+    4300012: TwoIncline
+    4300014: SixIncline
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 100
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
