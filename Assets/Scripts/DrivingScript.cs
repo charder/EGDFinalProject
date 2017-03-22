@@ -41,7 +41,11 @@ public class DrivingScript : MonoBehaviour {
 			if (Mathf.Abs(speedCurrent) < 1) {
 				speedCurrent = 0;
 			} else {
-				speedCurrent = 0.95f * speedCurrent;
+				if (grounded) {
+					speedCurrent = (1 - Time.deltaTime * 0.5f) * speedCurrent;
+				} else {
+					speedCurrent = (1 - Time.deltaTime * 0.3f) * speedCurrent;
+				}
 			}
 		}
 		if (Input.GetKey (KeyCode.A)) {
@@ -57,11 +61,11 @@ public class DrivingScript : MonoBehaviour {
 		}
 		float leftTrigger = Input.GetAxis ("LT");
 		if (Input.GetKey (KeyCode.LeftShift)) {
-			topRotate = rotateSpeed * 3;
-			topSpeedMod = speedCurrent * 0.75f;
+			topRotate = rotateSpeed * 2;
+			topSpeedMod = topSpeed * 0.85f;
 		} else if (leftTrigger > 0.4f) {
 			topRotate = rotateSpeed * (3 * leftTrigger);
-			topSpeedMod = topSpeed * (1 - 0.25f * leftTrigger);
+			topSpeedMod = topSpeed * (1 - 0.15f * leftTrigger);
 		} else {
 			topRotate = rotateSpeed;
 			topSpeedMod = topSpeed;
