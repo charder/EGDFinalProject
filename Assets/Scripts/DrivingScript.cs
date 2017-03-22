@@ -6,6 +6,7 @@ public class DrivingScript : MonoBehaviour {
 	public float speed;
 	float speedCurrent;
 	float topSpeed;
+	float topSpeedMod;
 	public float rotateSpeed;
 	float rotateCurrent;
 	float topRotate;
@@ -16,20 +17,25 @@ public class DrivingScript : MonoBehaviour {
 	void Start () {
 		moveDir = 1;
 		topSpeed = speed;
+		topSpeedMod = topSpeed; //modified top speed (changed by sharp turns)
 		topRotate = rotateSpeed;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKey (KeyCode.W) && grounded) {
-			if (speedCurrent != topSpeed) {
+		if (Input.GetKey (KeyCode.W) || Input.GetButton ("A")) {
+			moveDir = 1;
+		} else if (Input.GetKey (KeyCode.S) || Input.GetButton ("B")) {
+			moveDir = -1;
+		}
+
+		if (moveDir == 1 && (Input.GetKey (KeyCode.W) || (Input.GetAxis("RT") > 0.4f)) && grounded) {
+			if (speedCurrent < topSpeedMod) {
 				speedCurrent += Mathf.Min (0.2f * (topSpeed - speedCurrent), 0.5f);
-				moveDir = 1;
 			}
-		} else if (Input.GetKey (KeyCode.S) && grounded) {
-			if (speedCurrent != -topSpeed) {
+		} else if (moveDir == -1 && (Input.GetKey (KeyCode.S) || (Input.GetAxis("RT") > 0.4f)) && grounded) {
+			if (speedCurrent > -topSpeedMod) {
 				speedCurrent += Mathf.Max (0.2f * (-topSpeed - speedCurrent), -0.5f);
-				moveDir = -1;
 			}
 		} else {
 			if (Mathf.Abs(speedCurrent) < 1) {
@@ -39,19 +45,32 @@ public class DrivingScript : MonoBehaviour {
 			}
 		}
 		if (Input.GetKey (KeyCode.A)) {
-			transform.Rotate (0, 0, Mathf.Sign(speedCurrent)*-topRotate*Time.deltaTime);
+			transform.Rotate (0, 0, Mathf.Sign (speedCurrent) * -topRotate * Time.deltaTime);
+		} else if (Input.GetAxis ("LS_X") < -0.4f) {
+			transform.Rotate (0, 0, Input.GetAxis ("LS_X") * Mathf.Sign (speedCurrent) * topRotate * Time.deltaTime);
 		}
+			
 		if (Input.GetKey (KeyCode.D)) {
-			transform.Rotate (0, 0, Mathf.Sign(speedCurrent)*topRotate*Time.deltaTime);
+			transform.Rotate (0, 0, Mathf.Sign (speedCurrent) * topRotate * Time.deltaTime);
+		} else if (Input.GetAxis ("LS_X") > 0.4f) {
+			transform.Rotate (0, 0, Input.GetAxis ("LS_X") * Mathf.Sign (speedCurrent) * topRotate * Time.deltaTime);
 		}
-		if (Input.GetKeyDown (KeyCode.LeftShift) && grounded) {
+		float leftTrigger = Input.GetAxis ("LT");
+		if (Input.GetKey (KeyCode.LeftShift)) {
 			topRotate = rotateSpeed * 3;
-			speedCurrent = speedCurrent * 0.75f;
-		} else if (Input.GetKeyUp (KeyCode.LeftShift)) {
+			topSpeedMod = speedCurrent * 0.75f;
+		} else if (leftTrigger > 0.4f) {
+			topRotate = rotateSpeed * (3 * leftTrigger);
+			topSpeedMod = topSpeed * (1 - 0.25f * leftTrigger);
+		} else {
 			topRotate = rotateSpeed;
-			speedCurrent = speedCurrent / 0.75f;
+			topSpeedMod = topSpeed;
+		}
+		if (Mathf.Abs(speedCurrent) > topSpeedMod) {
+			speedCurrent = topSpeedMod * Mathf.Sign(speedCurrent);
 		}
 	transform.position += -1 * transform.right * Time.deltaTime * speedCurrent;
+	
 	}
 
 	void FixedUpdate() {
