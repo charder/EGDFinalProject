@@ -11,18 +11,25 @@ public class DrivingScript : MonoBehaviour {
 	float rotateCurrent;
 	float topRotate;
 	float moveDir; //direction of movement (forward/backward for correct driving control)
+	Rigidbody myBody;
 
 	bool grounded = false; //whether or not the car is on the ground
 	// Use this for initialization
 	void Start () {
+		myBody = this.GetComponent<Rigidbody> ();
 		moveDir = 1;
 		topSpeed = speed;
-		topSpeedMod = topSpeed; //modified top speed (changed by sharp turns)
+		topSpeedMod = topSpeed; // modified top speed (changed by sharp turns)
 		topRotate = rotateSpeed;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (grounded && ((Input.GetButtonDown ("Y")) || Input.GetKeyDown (KeyCode.Space))) {
+			print ("MIGHT AS WELL JUMP");
+			myBody.AddForce(Vector3.up * 35000,ForceMode.Impulse);
+			Quaternion.FromToRotation(this.transform.rotation.eulerAngles,new Vector3(-90,this.transform.rotation.y,this.transform.rotation.z));
+		}
 		if (Input.GetKey (KeyCode.W) || Input.GetButton ("A")) {
 			moveDir = 1;
 		} else if (Input.GetKey (KeyCode.S) || Input.GetButton ("B")) {
@@ -73,7 +80,8 @@ public class DrivingScript : MonoBehaviour {
 		if (Mathf.Abs(speedCurrent) > topSpeedMod) {
 			speedCurrent = topSpeedMod * Mathf.Sign(speedCurrent);
 		}
-	transform.position += -1 * transform.right * Time.deltaTime * speedCurrent;
+		Vector3 forwardMovement = new Vector3 (transform.right.x, 0, transform.right.z);
+		transform.position += -1 * forwardMovement * Time.deltaTime * speedCurrent;
 	
 	}
 
@@ -83,7 +91,7 @@ public class DrivingScript : MonoBehaviour {
 
 	//determine ground touch (there is a seperate trigger volume below the car that helps with this)
 	void OnTriggerStay(Collider other) {
-		if (other.gameObject != this.gameObject) {
+		if (other.gameObject.tag == "Ground") {
 			grounded = true;
 		}
 	}
