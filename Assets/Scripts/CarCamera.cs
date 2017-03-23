@@ -9,8 +9,10 @@ public class CarCamera : MonoBehaviour {
 	bool changeRotation;
 	float rotateTime;
 	public float rotSpeed; //speed of rotation in degrees per second
+	public Shader flatShader;
 	// Use this for initialization
 	void Start () {
+		GetComponent<Camera> ().RenderWithShader (flatShader, "OnPostRender");
 		localTransform = transform.position - car.transform.position;
 		changeRotation = false;
 

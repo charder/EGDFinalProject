@@ -82,7 +82,9 @@ public class DrivingScript : MonoBehaviour {
 		}
 		Vector3 forwardMovement = new Vector3 (transform.right.x, 0, transform.right.z);
 		transform.position += -1 * forwardMovement * Time.deltaTime * speedCurrent;
-	
+		if (Mathf.Abs (transform.rotation.x) > 120 || Mathf.Abs (transform.rotation.z) > 30) {
+			Quaternion.RotateTowards (transform.rotation, Quaternion.Euler (Mathf.Sign (transform.rotation.eulerAngles.x) * 90, transform.rotation.eulerAngles.y, Mathf.Sign(transform.rotation.eulerAngles.z) * 30),20*Time.deltaTime);
+		}
 	}
 
 	void FixedUpdate() {
