@@ -24,6 +24,11 @@ public class MissionManager : MonoBehaviour {
 	void Update () {
 		navArrow.transform.localPosition = new Vector3 (.35f, 0, 2.6f);
 		arrowAgent.destination = endGoal.transform.position;
+		NavMeshPath path = new NavMeshPath ();
+		arrowAgent.CalculatePath (endGoal.transform.position, path);
+		if (path.status == NavMeshPathStatus.PathPartial) {
+			arrowAgent.path = path;
+		}
 	}
 
 }
