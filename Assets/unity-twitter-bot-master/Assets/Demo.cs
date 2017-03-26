@@ -1,6 +1,8 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+using System;
 
 public class Demo : MonoBehaviour 
 {
@@ -33,6 +35,9 @@ public class Demo : MonoBehaviour
     // Go to this page for registration: http://dev.twitter.com/apps/new
     public string CONSUMER_KEY;
     public string CONSUMER_SECRET;
+
+    public InputField hashtag;
+    public InputField hashtagNum;
 
     // You need to save access token and secret for later use.
     // You can keep using them whenever you need to access the user's Twitter account. 
@@ -208,5 +213,44 @@ public class Demo : MonoBehaviour
     void OnPostTweet(bool success)
     {
         print("OnPostTweet - " + (success ? "succedded." : "failed."));
+    }
+
+    void OnGetHashtag(bool success)
+    {
+        print("OnGetHashtag - " + (success ? "SUCCESS" : "FAIL"));
+    }
+
+    void OnGetTrends(bool success)
+    {
+        print("OnGetTrends - " + (success ? "SUCCESS" : "FAIL"));
+    }
+
+    public void StartGetHashtag()
+    {
+        StartGetTrends ();
+//        string text = hashtag.text;
+//
+//        if( string.IsNullOrEmpty(text) )
+//        {
+//            Debug.LogWarning("StartGetHashtag: no hashtag.");
+//            return;
+//        }
+//
+//        int num = Convert.ToInt32( hashtagNum.text );
+//
+//        if( num < 1 )
+//        {
+//            Debug.LogWarning("StartGetHashtag: how many to get?");
+//            return;
+//        }
+//
+//        StartCoroutine(Twitter.API.GetHashtag(hashtag.text, num, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse,
+//                       new Twitter.GetTimelineCallback(this.OnGetHashtag)));
+    }
+
+    public void StartGetTrends()
+    {
+        StartCoroutine(Twitter.API.GetTrends(CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse,
+            new Twitter.GetTrendsCallback(this.OnGetTrends)));
     }
 }

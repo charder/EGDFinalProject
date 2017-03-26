@@ -1,4 +1,3 @@
-
 using System;
 using System.IO;
 using System.Net;
@@ -10,9 +9,8 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
-
 using UnityEngine;
-
+using SimpleJSON;
 namespace Twitter
 {
     public class RequestTokenResponse
@@ -32,6 +30,8 @@ namespace Twitter
     public delegate void RequestTokenCallback(bool success, RequestTokenResponse response);
     public delegate void AccessTokenCallback(bool success, AccessTokenResponse response);
     public delegate void PostTweetCallback(bool success);
+    public delegate void GetTimelineCallback(bool success);
+    public delegate void GetTrendsCallback(bool success);
 
     public class API
     {
@@ -215,50 +215,266 @@ namespace Twitter
                     {
                         callback(true);
                     }
+
+                    Debug.Log("PostTweet - " + web.text);
                 }
             }
         }
 
-//        public static IEnumerator GetTweet(string text, string consumerKey, string consumerSecret, AccessTokenResponse response, PostTweetCallback callback)
-//        {
-//            // TODO Mod status
-//            Dictionary<string, string> parameters = new Dictionary<string, string>();
-//            parameters.Add("status", text);
-//
-//            // Add data to the form to post.
-//            WWWForm form = new WWWForm();
-//            form.AddField("status", text);
-//
-//
-//            // TODO GetHeaderWithAccessToken with a GET instead of POST
-//
-//            // HTTP header
-//            Dictionary<string, string> headers = new Dictionary<string, string>();
-//            headers["Authorization"] = GetHeaderWithAccessToken("POST", PostTweetURL, consumerKey, consumerSecret, response, parameters);
-//
-//            WWW web = new WWW(PostTweetURL, form.data, headers);
-//            yield return web;
-//
-//            if (!string.IsNullOrEmpty(web.error))
-//            {
-//                Debug.Log(string.Format("GetTweet - failed. {0}\n{1}", web.error, web.text));
-//                callback(false);
-//            }
-//            else
-//            {
-//                string error = Regex.Match(web.text, @"<error>([^&]+)</error>").Groups[1].Value;
-//
-//                if (!string.IsNullOrEmpty(error))
-//                {
-//                    Debug.Log(string.Format("GetTweet - failed. {0}", error));
-//                    callback(false);
-//                }
-//                else
-//                {
-//                    callback(true);
-//                }
-//            }
-//        }
+
+
+        [Serializable]
+        public class TwitCollection
+        {
+            [Serializable]
+            public class Twit
+            {
+                public string created_at;
+                public string id;
+                public string id_str;
+                public string text;
+            };
+
+            public Twit[] statuses;
+        }
+/*
+        [System.Serializable]
+        public struct MyObject
+        {
+            [System.Serializable]
+            public struct ArrayEntry
+            {
+                public string name;
+                public string place;
+                public string description;
+            }
+
+            public ArrayEntry[] object;
+}
+*/
+        private const string GetTimelineURL = "https://api.twitter.com/1.1/statuses/home_timeline.json";
+
+
+        public static IEnumerator GetHashtag(string hashtag, int num, string consumerKey, string consumerSecret, AccessTokenResponse response, GetTimelineCallback callback)
+        {
+            /*
+                        if (string.IsNullOrEmpty(text) || text.Length > 140)
+                        {
+                            Debug.Log(string.Format("GetTimeline - text[{0}] is empty or too long.", text));
+
+                            callback(false);
+                        }
+                        else
+            */
+            {
+                /*
+                                Dictionary<string, string> parameters = new Dictionary<string, string>();
+                                //parameters.Add("status", text);
+
+                                // Add data to the form to post.
+                                //WWWForm form = new WWWForm();
+                                //form.AddField("status", text);
+                                // Need to fill body since Unity doesn't like an empty request body.
+                                byte[] dummmy = new byte[1];
+                                dummmy[0] = 0;
+
+                                // HTTP header
+                                Dictionary<string, string> headers = new Dictionary<string, string>();
+                                headers["Authorization"] = GetHeaderWithAccessToken("GET", GetTimelineURL, consumerKey, consumerSecret, response, parameters);
+                                //var customerInfo = Convert.ToBase64String(
+                                //    new UTF8Encoding().GetBytes(consumerKey + ":" + consumerSecret));
+                                //headers["Authorization"] = "Basic " + customerInfo;
+                */
+                //string url = string.Format(GetTweetURL, UrlEncode(text));
+                string url = "https://api.twitter.com/1.1/search/tweets.json";
+
+
+                Dictionary<string, string> parameters = new Dictionary<string, string>();
+
+                //these might have to be sorted alphabetically, with 'q' at the end...
+                parameters.Add("count", num.ToString());
+                //parameters.Add("lang", "en");// NOTE: OPTIONAL
+                parameters.Add("q", hashtag);
+
+
+                //Build the final search URL to match the oAuth signature passed in the header adding the parameters above
+                string appendURL = "";
+                for (int i = 0; i < parameters.Count; i++)
+                {
+
+                    if (!parameters.Keys.ElementAt(i).Contains("q"))
+                    {
+
+                        string pre = "";
+                        if (i > 0)
+                            pre = "";
+
+                        appendURL = appendURL + pre + parameters.Keys.ElementAt(i) + "=" + parameters.Values.ElementAt(i) + "&";
+                    }
+                }
+
+                // HTTP header
+                Dictionary<string, string> headers = new Dictionary<string, string>();
+                headers["Authorization"] = GetHeaderWithAccessToken("GET", url, consumerKey, consumerSecret, response, parameters);
+
+                //Escape all the spaces, quote marks to match what GetHeaderAccess did to the string
+                //Have to do this after the oAuth Signature was created so we don't double-encode...
+                string query = WWW.EscapeURL(parameters["q"]);
+
+                url = "https://api.twitter.com/1.1/search/tweets.json?" + appendURL + "q=" + query;
+
+                Debug.Log("Url posted to web is " + url);
+
+                WWW web = new WWW(url, null, headers);
+                yield return web;
+
+                //WWW web = new WWW(GetTimelineURL, dummmy, headers);
+                //yield return web;
+
+                if (!string.IsNullOrEmpty(web.error))
+                {
+                    Debug.Log(string.Format("GetTimeline1 - web error - failed. {0}\n{1}", web.error, web.text));
+                    callback(false);
+                }
+                else
+                {
+                    string error = Regex.Match(web.text, @"<error>([^&]+)</error>").Groups[1].Value;
+
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        Debug.Log(string.Format("GetTimeline - bad response - failed. {0}", error));
+                        callback(false);
+                    }
+                    else
+                    {
+                        callback(true);
+                    }
+                }
+                Debug.Log("GetTimeline - " + web.text);
+
+
+                var tweets = JSON.Parse(web.text);
+
+                Debug.Log("# of Tweets: " + tweets["statuses"].Count);
+                for (int i=0; i< tweets["statuses"].Count; i++)
+                {
+                    Debug.Log("Tweet #" + i + tweets["statuses"][i]["text"]);
+                }
+
+
+                //var tweets = JsonUtility.FromJson<TwitCollection>(web.text);
+                //if (tweets == null) Debug.Log("NULL TWEETS");
+                //Debug.Log("# of Tweets: " + tweets.statuses.Length);
+                //foreach (var tweet in tweets.statuses)
+                //{
+                //    Debug.Log(tweet.text);
+                //}
+
+
+            }
+
+        }
+
+        public static void GetTinyTimeline(string consumerKey, string consumerSecret, AccessTokenResponse response)
+        {
+            var oauth = new TinyTwitter.OAuthInfo
+            {
+                AccessToken = "YOUR ACCESS TOKEN",
+                AccessSecret = "YOUR ACCES SECRET",
+                ConsumerKey = "YOUR CONSUMER KEY",
+                ConsumerSecret = "YOUR CONSUMER SECRET"
+            };
+
+            oauth.AccessToken = response.Token;
+            oauth.AccessSecret = response.TokenSecret;
+            oauth.ConsumerKey = consumerKey;
+            oauth.ConsumerSecret = consumerSecret;
+
+            var twitter = new TinyTwitter.TinyTwitter(oauth);
+
+            // Update status, i.e, post a new tweet
+            //twitter.UpdateStatus("I'm tweeting from C#");
+
+            // Get home timeline tweets
+            var tweets = twitter.GetHomeTimeline();
+
+            foreach (var tweet in tweets)
+                Console.WriteLine("{0}: {1}", tweet.UserName, tweet.Text);
+
+        }
+
+        private const string GetTrendsURL = "https://api.twitter.com/1.1/trends/place.json";
+
+        public static IEnumerator GetTrends(string consumerKey, string consumerSecret, AccessTokenResponse response, GetTrendsCallback callback)
+        {
+            string url = "https://api.twitter.com/1.1/trends/place.json";
+            int woeID = 23424977;
+
+
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+
+            //these might have to be sorted alphabetically, with 'q' at the end...
+            parameters.Add("id", woeID.ToString());
+
+
+
+            //Build the final search URL to match the oAuth signature passed in the header adding the parameters above
+            string appendURL = "";
+            for (int i = 0; i < parameters.Count; i++)
+            {
+
+                if (!parameters.Keys.ElementAt(i).Contains("q"))
+                {
+                    string pre = "";
+                    if (i > 0)
+                        pre = "";
+
+                    appendURL = appendURL + pre + parameters.Keys.ElementAt(i) + "=" + parameters.Values.ElementAt(i) + "&";
+                }
+            }
+
+            // HTTP header
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers["Authorization"] = GetHeaderWithAccessToken("GET", url, consumerKey, consumerSecret, response, parameters);
+
+            url = "https://api.twitter.com/1.1/trends/place.json?" + "id=" + parameters["id"];
+
+            Debug.Log("Url posted to web is " + url);
+
+            WWW web = new WWW(url, null, headers);
+            yield return web;
+
+            if (!string.IsNullOrEmpty(web.error))
+            {
+                Debug.Log(string.Format("GetTrends - web error - failed. {0}\n{1}", web.error, web.text));
+                callback(false);
+            }
+            else
+            {
+                string error = Regex.Match(web.text, @"<error>([^&]+)</error>").Groups[1].Value;
+
+                if (!string.IsNullOrEmpty(error))
+                {
+                    Debug.Log(string.Format("GetTrends - bad response - failed. {0}", error));
+                    callback(false);
+                }
+                else
+                {
+                    callback(true);
+                }
+            }
+            Debug.Log("GetTimeline - " + web.text);
+
+            var tweets = JSON.Parse(web.text);
+
+            Debug.Log("# of Trends: " + tweets[0]["trends"].Count );
+
+            for (int i=0; i< tweets[0]["trends"].Count; i++)
+            {
+                Debug.Log("Trend #" + i + ": " + tweets[0]["trends"][i]["name"] + ", Volume: " + tweets[0]["trends"][i]["tweet_volume"]);
+            }
+        }
+
 
         #endregion
 
@@ -461,4 +677,49 @@ namespace Twitter
 
         #endregion
     }
+
+/*
+    //public Task<string> GetAccessToken()
+            public void GetAccessToken()
+    {
+        var httpClient = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://api.twitter.com/oauth2/token ");
+        var customerInfo = Convert.ToBase64String(new UTF8Encoding()
+                                  .GetBytes(OAuthConsumerKey + ":" + OAuthConsumerSecret));
+        request.Headers.Add("Authorization", "Basic " + customerInfo);
+        request.Content = new StringContent("grant_type=client_credentials", Encoding.UTF8,
+                                                                  "application/x-www-form-urlencoded");
+
+        HttpResponseMessage response = await httpClient.SendAsync(request);
+
+        string json = await response.Content.ReadAsStringAsync();
+        var serializer = new JavaScriptSerializer();
+        dynamic item = serializer.Deserialize<object>(json);
+        //return item["access_token"];
+    }
+
+public async Task<IEnumerable<string>> GetTweets(string userName, int count, string accessToken = null)
+    {
+        if (accessToken == null)
+        {
+            accessToken = await GetAccessToken();
+        }
+
+        var requestUserTimeline = new HttpRequestMessage(HttpMethod.Get,
+            string.Format("https://api.twitter.com/1.1/statuses/user_timeline.json?count={0}&screen_name={1}&trim_user=1&exclude_replies=1",
+                          count, userName));
+        requestUserTimeline.Headers.Add("Authorization", "Bearer " + accessToken);
+        var httpClient = new HttpClient();
+        HttpResponseMessage responseUserTimeLine = await httpClient.SendAsync(requestUserTimeline);
+        var serializer = new JavaScriptSerializer();
+        dynamic json = serializer.Deserialize<object>(await responseUserTimeLine.Content.ReadAsStringAsync());
+        var enumerableTweets = (json as IEnumerable<dynamic>);
+
+        if (enumerableTweets == null)
+        {
+            return null;
+        }
+        return enumerableTweets.Select(t => (string)(t["text"].ToString()));
+    }
+*/
 }
