@@ -13,8 +13,18 @@ public class DrivingScriptTest: MonoBehaviour {
 	float moveDir; //direction of movement (forward/backward for correct driving control)
 	Rigidbody myBody;
 
+	//Drag when on the ground and in the air (tonight)
 	public float groundedDrag;
 	public float flyingDrag;
+	//Angular drags both when drifting and not
+	public float driftAngDrag;
+	public float regularAngDrag;
+
+	float boostCurrent; //current time left on boost cooldown
+	public float boostCooldown; //overall cooldown of boost (from point of activation)
+	public float boostDuration; //duration of boost
+	float boostTime; //current boost duration
+	public float boostAmount; //amount of force applied in boost
 
 	bool grounded = false; //whether or not the car is on the ground
 	// Use this for initialization
@@ -53,32 +63,42 @@ public class DrivingScriptTest: MonoBehaviour {
 			}
 		}
 
+		//drifting/slowing
 		float leftTrigger = Input.GetAxis ("LT");
 		if (Input.GetKey (KeyCode.LeftShift)) {
-			topRotate = rotateSpeed * 2;
+			myBody.angularDrag = driftAngDrag;
+			//topRotate = rotateSpeed * 2;
 			topSpeedMod = topSpeed * 0.85f;
 		} else if (leftTrigger > 0.4f) {
-			topRotate = rotateSpeed * (3 * leftTrigger);
+			myBody.angularDrag = regularAngDrag + (driftAngDrag - regularAngDrag) * leftTrigger; //modify angulardrag based on 0-1 input
+			//topRotate = rotateSpeed * (3 * leftTrigger);
 			topSpeedMod = topSpeed * (1 - 0.15f * leftTrigger);
 		} else {
-			topRotate = rotateSpeed;
+			myBody.angularDrag = regularAngDrag;
+			//topRotate = rotateSpeed;
 			topSpeedMod = topSpeed;
 		}
+			
 		if (Mathf.Abs(speedCurrent) > topSpeedMod) {
 			speedCurrent = topSpeedMod * Mathf.Sign(speedCurrent);
 		}
-		/*
-		if (!grounded) {
-			Vector3 forwardMovement = new Vector3 (transform.right.x, 0, transform.right.z);
-			transform.position += -1 * forwardMovement * Time.deltaTime * speedCurrent;
-		} else {
-			transform.position += -1 * transform.right * Time.deltaTime * speedCurrent;
-		}
-		*/
-		//myBody.velocity = -1 * forwardMovement * Time.deltaTime * speedCurrent;
+
+		//rotation adjustment (keep upright whenever possible)
 		if (transform.rotation.eulerAngles.x < 260 || transform.rotation.eulerAngles.x > 280) {
 			print (transform.rotation.eulerAngles.x);
 			transform.rotation = Quaternion.RotateTowards (transform.rotation, Quaternion.Euler (-90, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z), 50 * Time.deltaTime);
+		}
+
+		//boosting
+		if (boostCurrent <= 0 && (Input.GetKey (KeyCode.Space) || Input.GetButton ("Y"))) {
+			boostCurrent = boostCooldown;
+			boostTime = boostDuration;
+		} else if (boostCurrent > 0) {
+			boostCurrent -= Time.deltaTime;
+		}
+		if (boostTime > 0) {
+			boostTime -= Time.deltaTime;
+			myBody.AddForce (-transform.right * boostAmount * Time.deltaTime * (myBody.drag/groundedDrag), ForceMode.VelocityChange);
 		}
 	}
 
@@ -109,7 +129,7 @@ public class DrivingScriptTest: MonoBehaviour {
 			myBody.AddTorque (-transform.forward * rotateSpeed,ForceMode.VelocityChange);
 			//transform.Rotate (0, 0, Mathf.Sign (speedCurrent) * -topRotate * Time.deltaTime);
 		} else if (Input.GetAxis ("LS_X") < -0.4f) {
-			myBody.AddTorque (-transform.forward*rotateSpeed*Input.GetAxis("LS_X"));
+			myBody.AddTorque (transform.forward*rotateSpeed*Input.GetAxis("LS_X"),ForceMode.VelocityChange);
 			//transform.Rotate (0, 0, Input.GetAxis ("LS_X") * Mathf.Sign (speedCurrent) * topRotate * Time.deltaTime);
 		}
 		//Turn Right
@@ -117,7 +137,7 @@ public class DrivingScriptTest: MonoBehaviour {
 			myBody.AddTorque (transform.forward * rotateSpeed,ForceMode.VelocityChange);
 			//transform.Rotate (0, 0, Mathf.Sign (speedCurrent) * topRotate * Time.deltaTime);
 		} else if (Input.GetAxis ("LS_X") > 0.4f) {
-			myBody.AddTorque (transform.forward*rotateSpeed*Input.GetAxis("RS_X"));
+			myBody.AddTorque (transform.forward*rotateSpeed*Input.GetAxis("LS_X"),ForceMode.VelocityChange);
 			//transform.Rotate (0, 0, Input.GetAxis ("LS_X") * Mathf.Sign (speedCurrent) * topRotate * Time.deltaTime);
 		}
 		//Vector3 forwardMovement = new Vector3 (transform.right.x, 0, transform.right.z);
