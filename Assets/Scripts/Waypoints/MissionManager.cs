@@ -23,6 +23,7 @@ public class MissionManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		navArrow.transform.localPosition = new Vector3 (.35f, 0, 2.6f);
+		arrowAgent.destination = endGoal.transform.position;
 	}
 
 }
