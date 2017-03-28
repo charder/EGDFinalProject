@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DrivingScriptTest: MonoBehaviour {
 	public float speed;
@@ -26,6 +27,15 @@ public class DrivingScriptTest: MonoBehaviour {
 	float boostTime; //current boost duration
 	public float boostAmount; //amount of force applied in boost
 
+	//Dark covers for forward and reverse to indicate if you're going forward or are in reverse
+	public Image forwardCover;
+	public Image reverseCover; 
+	//Boost bar cover and light bar
+	public Image boostCover;
+	public Transform boostBar; //this is a transform because the only thing we need from it is it's x-scale
+	public Color boostingColor; //color to display while boosting
+	public Color boostCooldownColor; //color to display while not boosting
+
 	bool grounded = false; //whether or not the car is on the ground
 	// Use this for initialization
 	void Start () {
@@ -46,8 +56,12 @@ public class DrivingScriptTest: MonoBehaviour {
 		//Controller Switch Gears
 		if (Input.GetKey (KeyCode.W) || Input.GetButton ("A")) {
 			moveDir = 1;
+			forwardCover.color = new Color (forwardCover.color.r, forwardCover.color.g, forwardCover.color.b, 0);
+			reverseCover.color = new Color (reverseCover.color.r, reverseCover.color.g, reverseCover.color.b, 0.6f);
 		} else if (Input.GetKey (KeyCode.S) || Input.GetButton ("B")) {
 			moveDir = -1;
+			forwardCover.color = new Color (forwardCover.color.r, forwardCover.color.g, forwardCover.color.b, 0.6f);
+			reverseCover.color = new Color (reverseCover.color.r, reverseCover.color.g, reverseCover.color.b, 0);
 		}
 
 		//Slow over time
@@ -84,7 +98,7 @@ public class DrivingScriptTest: MonoBehaviour {
 		}
 
 		//rotation adjustment (keep upright whenever possible)
-		if (transform.rotation.eulerAngles.x < 260 || transform.rotation.eulerAngles.x > 280) {
+		if (transform.rotation.eulerAngles.x < 250 || transform.rotation.eulerAngles.x > 290) {
 			print (transform.rotation.eulerAngles.x);
 			transform.rotation = Quaternion.RotateTowards (transform.rotation, Quaternion.Euler (-90, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z), 50 * Time.deltaTime);
 		}
@@ -95,8 +109,12 @@ public class DrivingScriptTest: MonoBehaviour {
 			boostTime = boostDuration;
 		} else if (boostCurrent > 0) {
 			boostCurrent -= Time.deltaTime;
+			boostBar.localScale = new Vector3 (Mathf.Max(0, (boostCooldown - boostCurrent - boostDuration) / (boostCooldown - boostDuration)), boostBar.localScale.y, boostBar.localScale.z);
+			boostCover.color = boostCooldownColor;
 		}
 		if (boostTime > 0) {
+			boostBar.localScale = new Vector3 (Mathf.Max(0, boostTime / boostDuration), boostBar.localScale.y, boostBar.localScale.z);
+			boostCover.color = boostingColor;
 			boostTime -= Time.deltaTime;
 			myBody.AddForce (-transform.right * boostAmount * Time.deltaTime * (myBody.drag/groundedDrag), ForceMode.VelocityChange);
 		}
