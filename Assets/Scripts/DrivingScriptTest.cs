@@ -36,6 +36,10 @@ public class DrivingScriptTest: MonoBehaviour {
 	public Color boostingColor; //color to display while boosting
 	public Color boostCooldownColor; //color to display while not boosting
 
+	public AudioSource soundCarSustain;
+	float sustainPitch = 0.1f; //pitch of sustain sound (makes it go up and down in rev)
+	float sustainPitchBonus = 0; //bonus added to sustain sound from boosting
+
 	bool grounded = false; //whether or not the car is on the ground
 	// Use this for initialization
 	void Start () {
@@ -111,13 +115,16 @@ public class DrivingScriptTest: MonoBehaviour {
 			boostCurrent -= Time.deltaTime;
 			boostBar.localScale = new Vector3 (Mathf.Max(0, (boostCooldown - boostCurrent - boostDuration) / (boostCooldown - boostDuration)), boostBar.localScale.y, boostBar.localScale.z);
 			boostCover.color = boostCooldownColor;
+			sustainPitchBonus = Mathf.Max (0, sustainPitchBonus - 0.4f * Time.deltaTime);
 		}
 		if (boostTime > 0) {
 			boostBar.localScale = new Vector3 (Mathf.Max(0, boostTime / boostDuration), boostBar.localScale.y, boostBar.localScale.z);
 			boostCover.color = boostingColor;
 			boostTime -= Time.deltaTime;
+			sustainPitchBonus = 0.2f;
 			myBody.AddForce (-transform.right * boostAmount * Time.deltaTime * (myBody.drag/groundedDrag), ForceMode.VelocityChange);
 		}
+		soundCarSustain.pitch = sustainPitch + sustainPitchBonus;
 	}
 
 	void FixedUpdate() {
@@ -129,19 +136,25 @@ public class DrivingScriptTest: MonoBehaviour {
 			myBody.drag = flyingDrag;
 		}
 		//Drive
-		if (moveDir == 1 && (Input.GetKey (KeyCode.W) || (Input.GetAxis("RT") > 0.4f)) && grounded) {
+		if (moveDir == 1 && (Input.GetKey (KeyCode.W) || (Input.GetAxis ("RT") > 0.4f)) && grounded) {
 			if (speedCurrent < topSpeedMod) {
-				myBody.AddForce(-transform.right * topSpeedMod,ForceMode.VelocityChange);
+				sustainPitch = 0.3f;
+				myBody.AddForce (-transform.right * topSpeedMod, ForceMode.VelocityChange);
 				//speedCurrent += Mathf.Min (0.2f * (topSpeed - speedCurrent), 0.5f);
 			}
 		}
 		//Reverse
-		else if (moveDir == -1 && (Input.GetKey (KeyCode.S) || (Input.GetAxis("RT") > 0.4f)) && grounded) {
+		else if (moveDir == -1 && (Input.GetKey (KeyCode.S) || (Input.GetAxis ("RT") > 0.4f)) && grounded) {
 			if (speedCurrent > -topSpeedMod) {
-				myBody.AddForce(transform.right * topSpeedMod,ForceMode.VelocityChange);
+				sustainPitch = 0.2f;
+				myBody.AddForce (transform.right * topSpeedMod, ForceMode.VelocityChange);
 				//speedCurrent += Mathf.Max (0.2f * (-topSpeed - speedCurrent), -0.5f);
 			}
-		} 
+		} else {
+			if (sustainPitch > 0.1f) {
+				sustainPitch = Mathf.Max (0.1f, sustainPitch - 0.4f * Time.fixedDeltaTime);
+			}
+		}
 		//Turn Left
 		if (Input.GetKey (KeyCode.A)) {
 			myBody.AddTorque (-transform.forward * rotateSpeed,ForceMode.VelocityChange);
