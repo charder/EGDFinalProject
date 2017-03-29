@@ -29,6 +29,7 @@ public class MissionManager : MonoBehaviour {
 		if (path.status == NavMeshPathStatus.PathPartial) {
 			arrowAgent.path = path;
 		}
+		arrowAgent.Resume ();
 	}
 
 }
