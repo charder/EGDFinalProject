@@ -9,8 +9,10 @@ public class CarCamera : MonoBehaviour {
 	bool changeRotation;
 	float rotateTime;
 	public float rotSpeed; //speed of rotation in degrees per second
+	public Shader flatShader;
 	// Use this for initialization
 	void Start () {
+		GetComponent<Camera> ().RenderWithShader (flatShader, "OnPostRender");
 		localTransform = transform.position - car.transform.position;
 		changeRotation = false;
 
@@ -18,7 +20,7 @@ public class CarCamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.position = car.transform.position - transform.forward * 18 + transform.up * 3;
+		transform.position = car.transform.position - transform.forward * 16 + transform.up * 2;
 		Vector3 newRot = new Vector3 (car.transform.rotation.eulerAngles.x, car.transform.rotation.eulerAngles.y - 90, car.transform.rotation.eulerAngles.z);
 		transform.rotation = Quaternion.RotateTowards (transform.rotation,Quaternion.Euler(newRot), rotSpeed * Time.deltaTime);
 
@@ -49,6 +51,6 @@ public class CarCamera : MonoBehaviour {
 		float rotAmount = Mathf.Sign(tmpRot)*Mathf.Min (Mathf.Abs (tmpRot), rotSpeed * Time.deltaTime);
 		transform.Rotate (0,rotAmount,0);
 		*/
-		transform.eulerAngles = new Vector3 (21, transform.eulerAngles.y, 0);
+		transform.eulerAngles = new Vector3 (18, transform.eulerAngles.y, 0);
 	}
 }
