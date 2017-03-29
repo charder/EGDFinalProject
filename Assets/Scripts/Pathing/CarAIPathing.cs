@@ -15,7 +15,7 @@ public class CarAIPathing : MonoBehaviour {
 
 	void Awake () {
 		hashtag = GetComponentInChildren<TextMesh> ();
-		playerCam = FindObjectOfType<AudioListener> ().gameObject;
+		playerCam = GameObject.Find ("CameraTransform");
 	}
 
 	void Start () {
@@ -37,7 +37,9 @@ public class CarAIPathing : MonoBehaviour {
 			agent.SetDestination (pathPoints [currentPoint].position);
 		}
 		agent.nextPosition = transform.position;
-		//hashtag.gameObject.transform.LookAt (playerCam.transform);
+		hashtag.gameObject.transform.LookAt (Camera.main.transform,transform.up);
+		Vector3 hRot = hashtag.transform.rotation.eulerAngles;
+		hashtag.transform.rotation = Quaternion.Euler (hRot.x, 0, hRot.z);
 		print (playerCam.transform.position);
 	}
 }
