@@ -215,37 +215,36 @@ public class Demo : MonoBehaviour
         print("OnPostTweet - " + (success ? "succedded." : "failed."));
     }
 
-    void OnGetHashtag(bool success)
+    void OnGetHashtag(bool success, string results)
     {
         print("OnGetHashtag - " + (success ? "SUCCESS" : "FAIL"));
     }
 
-    void OnGetTrends(bool success)
+    void OnGetTrends(bool success, string results)
     {
         print("OnGetTrends - " + (success ? "SUCCESS" : "FAIL"));
     }
 
     public void StartGetHashtag()
     {
-        StartGetTrends ();
-//        string text = hashtag.text;
-//
-//        if( string.IsNullOrEmpty(text) )
-//        {
-//            Debug.LogWarning("StartGetHashtag: no hashtag.");
-//            return;
-//        }
-//
-//        int num = Convert.ToInt32( hashtagNum.text );
-//
-//        if( num < 1 )
-//        {
-//            Debug.LogWarning("StartGetHashtag: how many to get?");
-//            return;
-//        }
-//
-//        StartCoroutine(Twitter.API.GetHashtag(hashtag.text, num, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse,
-//                       new Twitter.GetTimelineCallback(this.OnGetHashtag)));
+        string text = hashtag.text;
+
+        if( string.IsNullOrEmpty(text) )
+        {
+            Debug.LogWarning("StartGetHashtag: no hashtag.");
+            return;
+        }
+
+        int num = Convert.ToInt32( hashtagNum.text );
+
+        if( num < 1 )
+        {
+            Debug.LogWarning("StartGetHashtag: how many to get?");
+            return;
+        }
+
+        StartCoroutine(Twitter.API.GetHashtag(hashtag.text, num, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse,
+                       new Twitter.GetTimelineCallback(this.OnGetHashtag)));
     }
 
     public void StartGetTrends()
