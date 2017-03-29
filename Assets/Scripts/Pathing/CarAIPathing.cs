@@ -8,14 +8,15 @@ public class CarAIPathing : MonoBehaviour {
 	NavMeshAgent agent;
 	public GameObject pathObject; //object that holds a path this car will follow
 	public TextMesh hashtag; //this car's hashtag/trending topic
-	public GameObject playerCam; //find the camera
+	public Transform playerCam; //find the camera
 	List<Transform> pathPoints; //transforms of a path defined by pathObject
 	public int currentPoint; //current point # in its path
 	// Use this for initialization
 
 	void Awake () {
 		hashtag = GetComponentInChildren<TextMesh> ();
-		playerCam = GameObject.Find ("CameraTransform");
+		hashtag.transform.localScale = new Vector3 (-hashtag.transform.localScale.x, hashtag.transform.localScale.y, hashtag.transform.localScale.z);
+		playerCam = Camera.main.transform;
 	}
 
 	void Start () {
@@ -36,10 +37,10 @@ public class CarAIPathing : MonoBehaviour {
 			}
 			agent.SetDestination (pathPoints [currentPoint].position);
 		}
-		agent.nextPosition = transform.position;
-		hashtag.gameObject.transform.LookAt (Camera.main.transform,transform.up);
+		//agent.nextPosition = transform.position;
+		hashtag.transform.LookAt(playerCam.position);
 		Vector3 hRot = hashtag.transform.rotation.eulerAngles;
-		hashtag.transform.rotation = Quaternion.Euler (hRot.x, 0, hRot.z);
+		//hashtag.transform.rotation = Quaternion.Euler (hRot.x, 0, hRot.z);
 		print (playerCam.transform.position);
 	}
 }
