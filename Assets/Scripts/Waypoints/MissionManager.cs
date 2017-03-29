@@ -16,12 +16,15 @@ public class MissionManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		/*
 		arrowAgent = navArrow.GetComponent<NavMeshAgent> ();
 		arrowAgent.destination = endGoal.transform.position;
+		*/
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		/**
 		navArrow.transform.localPosition = new Vector3 (.35f, 0, 2.6f);
 		arrowAgent.destination = endGoal.transform.position;
 		NavMeshPath path = new NavMeshPath ();
@@ -30,6 +33,10 @@ public class MissionManager : MonoBehaviour {
 			arrowAgent.path = path;
 		}
 		arrowAgent.Resume ();
+		**/
+		Quaternion targetRotation = Quaternion.LookRotation (endGoal.transform.position - navArrow.transform.position);
+		float str = 4;
+		navArrow.transform.rotation = Quaternion.Lerp (navArrow.transform.rotation, targetRotation, str);
 	}
 
 }
