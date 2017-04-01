@@ -1,0 +1,8 @@
+CORE GAME LOOP
+	Player can view their Twitter time line and choose an action in response to those such as retweet, like or reply. This information is all available in a location that is isolated from other cars
+	Once a choice is made the player takes their "action" across a bridge connecting them to the rest of the twitterverse where there is traffic from other trending topics or hashtags. The player delivers their message
+	to one of a few locations in the city and then returns to their world as fast as possible. The user is timed to emphasize the speed at which information spreads and topics fly by on social media. If the player fails
+	to meet their goal on time, their message is lost amongst the other twitter users. 
+	
+	This should be worded better in the future.
+	

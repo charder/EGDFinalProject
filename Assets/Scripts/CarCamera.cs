@@ -20,7 +20,7 @@ public class CarCamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.position = car.transform.position - transform.forward * 16 + transform.up * 2;
+		transform.position = car.transform.position - transform.forward * 14 + transform.up * 2f;
 		Vector3 newRot = new Vector3 (car.transform.rotation.eulerAngles.x, car.transform.rotation.eulerAngles.y - 90, car.transform.rotation.eulerAngles.z);
 		transform.rotation = Quaternion.RotateTowards (transform.rotation,Quaternion.Euler(newRot), rotSpeed * Time.deltaTime);
 
@@ -51,6 +51,6 @@ public class CarCamera : MonoBehaviour {
 		float rotAmount = Mathf.Sign(tmpRot)*Mathf.Min (Mathf.Abs (tmpRot), rotSpeed * Time.deltaTime);
 		transform.Rotate (0,rotAmount,0);
 		*/
-		transform.eulerAngles = new Vector3 (18, transform.eulerAngles.y, 0);
+		transform.eulerAngles = new Vector3 (10, transform.eulerAngles.y, 0);
 	}
 }
