@@ -18,7 +18,7 @@ public class Goal : MonoBehaviour {
 	void Update () {
 		if (disappearing && alphaValue <= 0) {
 			disappearing = false;
-			Destroy (gameObject);
+			gameObject.SetActive (false);
 		} else if(disappearing){
 			alphaValue -= rate * Time.deltaTime;
 			foreach (Transform child in transform) {
@@ -31,6 +31,15 @@ public class Goal : MonoBehaviour {
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.tag == "Player") {
 			disappearing = true;
+		}
+	}
+
+	public void Restart(){
+		disappearing = false;
+		alphaValue = .5f;
+		foreach (Transform child in transform) {
+			Color c = child.gameObject.GetComponent<SpriteRenderer> ().color;
+			child.gameObject.GetComponent<SpriteRenderer> ().color = new Color (c.r, c.g, c.b, alphaValue);
 		}
 	}
 }
