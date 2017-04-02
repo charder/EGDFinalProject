@@ -6,12 +6,15 @@ using UnityEngine.AI;
 public class MissionManager : MonoBehaviour {
 
 	public GameObject endGoal;
+	public GameObject startLocation;
 
 	public GameObject car;
 	public GameObject navArrow;
 	private NavMeshAgent arrowAgent;
 
 	public float detectDistance = 10f;
+
+	public bool doingMission = true;
 
 
 	// Use this for initialization
