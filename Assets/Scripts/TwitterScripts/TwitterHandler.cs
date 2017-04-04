@@ -9,8 +9,8 @@ public class TwitterHandler: MonoBehaviour {
 
     GameObject twitterHandler = null;
     Twitter.AccessTokenResponse m_AccessTokenResponse = new Twitter.AccessTokenResponse();
-	Dictionary<string, int> trends;
-
+	public Dictionary<string, int> trends;
+	public List<string> trendKeys = new List<string> ();
 	// Use this for initialization
 	void Start () {
 		twitterHandler = this.gameObject;
@@ -70,7 +70,7 @@ public class TwitterHandler: MonoBehaviour {
 
 		//Send the first couple to the preset cars for the demo!!! #HARDCODED
 		CarAIPathing[] cars =  GetComponentsInChildren<CarAIPathing>();
-		List<string> trendKeys = new List<string> ();
+		trendKeys = new List<string> ();
 		foreach (var key in trends.Keys) {
 			trendKeys.Add (key);
 		}

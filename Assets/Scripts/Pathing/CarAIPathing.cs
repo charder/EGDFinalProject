@@ -29,7 +29,7 @@ public class CarAIPathing : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (agent.remainingDistance < 1f) {
+		if (agent.remainingDistance < 8f) {
 			if (currentPoint + 1 == pathPoints.Count) {
 				currentPoint = 0;
 			} else {
@@ -41,6 +41,5 @@ public class CarAIPathing : MonoBehaviour {
 		hashtag.transform.LookAt(playerCam.position);
 		Vector3 hRot = hashtag.transform.rotation.eulerAngles;
 		//hashtag.transform.rotation = Quaternion.Euler (hRot.x, 0, hRot.z);
-		print (playerCam.transform.position);
 	}
 }

@@ -17,7 +17,6 @@ public class CarAIPath : MonoBehaviour {
 				path_objects.Add (path_object);
 			}
 		}
-
 		for (int i = 0; i < path_objects.Count; i++) {
 			Vector3 position = path_objects [i].position;
 			if (i > 0) {
