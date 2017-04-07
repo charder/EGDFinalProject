@@ -42,7 +42,7 @@ public class MissionManager : MonoBehaviour {
 		*/
 		doingMission = false;
 		navArrow.SetActive (false);
-		StartMission ();
+		//StartMission ();
 	}
 	
 	// Update is called once per frame
@@ -77,7 +77,7 @@ public class MissionManager : MonoBehaviour {
 		}
 	}
 
-	void StartMission(){
+	public void StartMission(){
 		timerObject.SetActive (true);
 		currentMission++;
 		endGoal = destinations [currentMission].GetComponent<DestinationManager>().goal.gameObject;
