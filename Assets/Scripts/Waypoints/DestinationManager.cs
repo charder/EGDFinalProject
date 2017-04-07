@@ -7,6 +7,8 @@ public class DestinationManager : MonoBehaviour {
 	public DestinationSign[] signs = new DestinationSign[1];
 	public Goal goal;
 
+	public MissionManager mm;
+
 	// Use this for initialization
 	void Start () {
 		Unset ();
@@ -37,5 +39,11 @@ public class DestinationManager : MonoBehaviour {
 			ds.ChangeSign (0, false);
 			goal.gameObject.SetActive (false);
 		}
+	}
+
+	public void Victory(){
+		mm = FindObjectOfType<MissionManager> ();
+		mm.EndMission ();
+		mm.WinMission ();
 	}
 }

@@ -31,6 +31,7 @@ public class Goal : MonoBehaviour {
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.tag == "Player") {
 			disappearing = true;
+			TriggerVictory ();
 		}
 	}
 
@@ -41,5 +42,9 @@ public class Goal : MonoBehaviour {
 			Color c = child.gameObject.GetComponent<SpriteRenderer> ().color;
 			child.gameObject.GetComponent<SpriteRenderer> ().color = new Color (c.r, c.g, c.b, alphaValue);
 		}
+	}
+
+	public void TriggerVictory(){
+		transform.parent.gameObject.GetComponent<DestinationManager> ().Victory ();
 	}
 }
