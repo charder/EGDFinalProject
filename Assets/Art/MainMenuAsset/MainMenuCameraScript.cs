@@ -10,6 +10,7 @@ public class MainMenuCameraScript : MonoBehaviour {
         CameraAnimator = GetComponent<Animator>();
         UpdatingAlpha = 0.0f;
         bFadeOut = false;
+        TwitterPanel.SetActive(false);
     }
 	
 	// Update is called once per frame
@@ -60,7 +61,8 @@ public class MainMenuCameraScript : MonoBehaviour {
 
         if (Input.GetKeyDown("t"))
         {
-            CameraAnimator.SetBool("ShouldZoom", !CameraAnimator.GetBool("ShouldZoom"));
+            bool CurrentState = CameraAnimator.GetBool("ShouldZoom");
+            CameraAnimator.SetBool("ShouldZoom", !CurrentState);
         }
 
         if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimation"))
@@ -68,6 +70,7 @@ public class MainMenuCameraScript : MonoBehaviour {
             if (CameraAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 && !CameraAnimator.IsInTransition(0))
             {
                 CameraAnimator.SetBool("IsZoomed", true);
+                TwitterPanel.SetActive(true);
             }
         }
 
@@ -76,20 +79,25 @@ public class MainMenuCameraScript : MonoBehaviour {
             if (CameraAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 && !CameraAnimator.IsInTransition(0))
             {
                 CameraAnimator.SetBool("IsZoomed", false);
+                TwitterPanel.SetActive(false);
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (!CameraAnimator.GetBool("IsZoomed"))
         {
-            UpdatingAlpha = 0.01f;
-            FadeOutImage.color = new Color(0.0f, 0.0f, 0.0f, UpdatingAlpha);
-            bEnteringNewScene = true;
-            bFadeOut = false;
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                UpdatingAlpha = 0.01f;
+                FadeOutImage.color = new Color(0.0f, 0.0f, 0.0f, UpdatingAlpha);
+                bEnteringNewScene = true;
+                bFadeOut = false;
+            }
         }
     }
 
     public Text StartText;
     public Image FadeOutImage;
+    public GameObject TwitterPanel;
 
     private bool bEnteringNewScene;
     private bool bFadeOut;
