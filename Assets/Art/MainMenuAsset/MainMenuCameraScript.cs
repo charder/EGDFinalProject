@@ -6,8 +6,6 @@ public class MainMenuCameraScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        timer = 0.0f;
-        bWait = false;
         CameraAnimator = GetComponent<Animator>();
     }
 	
@@ -15,26 +13,25 @@ public class MainMenuCameraScript : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown("t"))
         {
-            bWait = true;
-
             CameraAnimator.SetBool("ShouldZoom", !CameraAnimator.GetBool("ShouldZoom"));
         }
 
-        if (bWait)
+        if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimation"))
         {
-            timer += Time.deltaTime;
+            if (CameraAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 && !CameraAnimator.IsInTransition(0))
+            {
+                CameraAnimator.SetBool("IsZoomed", true);
+            }
         }
 
-        if (timer>0.5f)
+        if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimationReverse"))
         {
-            CameraAnimator.SetBool("IsZoomed", !CameraAnimator.GetBool("IsZoomed"));
-            bWait = false;
-            timer = 0.0f;
+            if (CameraAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 && !CameraAnimator.IsInTransition(0))
+            {
+                CameraAnimator.SetBool("IsZoomed", false);
+            }
         }
+    }
 
-	}
-
-    private float timer;
-    private bool bWait;
     private Animator CameraAnimator;
 }
