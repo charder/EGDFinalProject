@@ -349,7 +349,67 @@ namespace Twitter
 //            }
         }
 
-        public static void GetTinyTimeline(string consumerKey, string consumerSecret, AccessTokenResponse response)
+        /// 
+
+        public static IEnumerator GetTimeline(int num, string consumerKey, string consumerSecret, AccessTokenResponse response, GetTimelineCallback callback) {
+
+            // FINISH ME!!!
+
+            string url = "https://api.twitter.com/1.1/statuses/home_timeline.json";
+
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+
+            //these might have to be sorted alphabetically, with 'q' at the end...
+            parameters.Add("count", num.ToString());
+            parameters.Add("exclude_replies", "true");
+            parameters.Add("include_entities", "false");
+            parameters.Add("trim_user", "true");
+
+            string appendURL = "";
+            for (int i = 0; i < parameters.Count; i++)
+            { 
+                string pre = "";
+                if (i > 0)
+                    pre = "";
+
+                appendURL = appendURL + pre + parameters.Keys.ElementAt(i) + "=" + parameters.Values.ElementAt(i) + "&";
+            }
+
+
+            // HTTP header
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers["Authorization"] = GetHeaderWithAccessToken("GET", url, consumerKey, consumerSecret, response, parameters);
+
+            url = url + "?" + appendURL;
+
+            Debug.Log("Url posted to web is " + url);
+
+            WWW web = new WWW(url, null, headers);
+            yield return web;
+
+            if (!string.IsNullOrEmpty(web.error))
+            {
+                Debug.Log(string.Format("GetTimeline - web error - failed. {0}\n{1}", web.error, web.text));
+                callback(false, web.text);
+            }
+            else
+            {
+                string error = Regex.Match(web.text, @"<error>([^&]+)</error>").Groups[1].Value;
+
+                if (!string.IsNullOrEmpty(error))
+                {
+                    Debug.Log(string.Format("GetTimeline - bad response - failed. {0}", error));
+                    callback(false, web.text);
+                }
+                else
+                {
+                    callback(true, web.text);
+                }
+            }
+        }
+        /// 
+
+        public static void GetTinyTimeline(string consumerKey, string consumerSecret, AccessTokenResponse response, GetTimelineCallback callback)
         {
             var oauth = new TinyTwitter.OAuthInfo
             {
@@ -376,6 +436,7 @@ namespace Twitter
                 Console.WriteLine("{0}: {1}", tweet.UserName, tweet.Text);
 
         }
+            
 
         private const string GetTrendsURL = "https://api.twitter.com/1.1/trends/place.json";
 
