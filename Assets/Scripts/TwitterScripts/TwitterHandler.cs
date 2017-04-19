@@ -11,9 +11,19 @@ public class TwitterHandler: MonoBehaviour {
     Twitter.AccessTokenResponse m_AccessTokenResponse = new Twitter.AccessTokenResponse();
 	public Dictionary<string, int> trends;
 	public List<string> trendKeys = new List<string> ();
+
+    // You need to save access token and secret for later use.
+    // You can keep using them whenever you need to access the user's Twitter account. 
+    // They will be always valid until the user revokes the access to your application.
+    const string PLAYER_PREFS_TWITTER_USER_ID           = "TwitterUserID";
+    const string PLAYER_PREFS_TWITTER_USER_SCREEN_NAME  = "TwitterUserScreenName";
+    const string PLAYER_PREFS_TWITTER_USER_TOKEN        = "TwitterUserToken";
+    const string PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET = "TwitterUserTokenSecret";
+
 	// Use this for initialization
 	void Start () {
-		twitterHandler = this.gameObject;
+        LoadTwitterUserInfo ();
+        twitterHandler = this.gameObject;
 		StartGetTrends ();
 	}
 	
@@ -30,11 +40,18 @@ public class TwitterHandler: MonoBehaviour {
             StartGetTrends ();
         }
 
+        */
+
         if (Input.GetKeyDown (KeyCode.E)) {
-            Debug.Log ("Posting something to twitter...");
-            StartPostTweet ("#Test");
+            //Debug.Log ("Posting something to twitter...");
+            StartPostTweet ("#Test isadhaidh");
+            //StartGetTimeline();
         }
-		*/
+
+        if (Input.GetKeyDown (KeyCode.W)) {
+            //Debug.Log ("Posting something to twitter...");
+            StartGetTimeline();
+        }
 	}
 
     /// //////////////////////////////////////////////////////////////////////////////////////////
@@ -130,6 +147,64 @@ public class TwitterHandler: MonoBehaviour {
     void OnPostTweet(bool success)
     {
         print("OnPostTweet - " + (success ? "succedded." : "failed."));
+    }
+
+    /// //////////////////////////////////////////////////////////////////////////////////////////
+
+    public void StartGetTimeline() {
+        Demo d = twitterHandler.GetComponent<Demo> ();
+        StartCoroutine (Twitter.API.GetTimeline(12, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.GetTimelineCallback(this.OnGetTimeLine)));
+    }
+
+    void OnGetTimeLine(bool success, string results)
+    {
+        print("OnGetTimeline - " + (success ? "succedded." : "failed."));
+        var tweets = JSON.Parse(results);
+
+//        for (int i = 0; i < tweets.Count; i++) {
+//            Debug.Log (tweets [i]["text"]);
+//        }
+
+        //string tweets[i]["text"]
+        //int tweets[i]["id"]
+        //string tweets[i]["in_reply_to_screen_name"] //nullable, will always exist but may be null
+        //string tweets[i]["in_reply_to_status_id"] //nullable, will always exist but may be null
+        //int tweets[i]["in_reply_to_user_id"] //nullable, will always exist but may be null
+        //int tweets[i]["quoted_status_id"] //Warning! may not exist
+        //int tweets[i]["retweeted count"]
+        //bool tweets[i]["retweeted"] // If retweeted by THIS account
+
+        //int tweets[i]["favorite_count"]
+        //bool tweets[i]["favorited"] // if by THIS account
+
+        // var user = tweets[i]["user"];
+        // string name = user["name"]; 
+    }
+    /// //////////////////////////////////////////////////////////////////////////////////////////
+
+
+    // Loading Stuff
+    void LoadTwitterUserInfo()
+    {
+        m_AccessTokenResponse = new Twitter.AccessTokenResponse();
+
+        m_AccessTokenResponse.UserId        = PlayerPrefs.GetString(PLAYER_PREFS_TWITTER_USER_ID);
+        m_AccessTokenResponse.ScreenName    = PlayerPrefs.GetString(PLAYER_PREFS_TWITTER_USER_SCREEN_NAME);
+        m_AccessTokenResponse.Token         = PlayerPrefs.GetString(PLAYER_PREFS_TWITTER_USER_TOKEN);
+        m_AccessTokenResponse.TokenSecret   = PlayerPrefs.GetString(PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET);
+
+        if (!string.IsNullOrEmpty(m_AccessTokenResponse.Token) &&
+            !string.IsNullOrEmpty(m_AccessTokenResponse.ScreenName) &&
+            !string.IsNullOrEmpty(m_AccessTokenResponse.Token) &&
+            !string.IsNullOrEmpty(m_AccessTokenResponse.TokenSecret))
+        {
+            string log = "LoadTwitterUserInfo - succeeded";
+            log += "\n    UserId : " + m_AccessTokenResponse.UserId;
+            log += "\n    ScreenName : " + m_AccessTokenResponse.ScreenName;
+            log += "\n    Token : " + m_AccessTokenResponse.Token;
+            log += "\n    TokenSecret : " + m_AccessTokenResponse.TokenSecret;
+            print(log);
+        }
     }
 
 }
