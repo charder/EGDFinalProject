@@ -44,7 +44,7 @@ public class TwitterHandler: MonoBehaviour {
 
         if (Input.GetKeyDown (KeyCode.E)) {
             //Debug.Log ("Posting something to twitter...");
-            StartPostTweet ("#Test isadhaidh");
+			StartPostFavorite ("854142358216204290");
             //StartGetTimeline();
         }
 
@@ -153,10 +153,10 @@ public class TwitterHandler: MonoBehaviour {
 
     public void StartGetTimeline() {
         Demo d = twitterHandler.GetComponent<Demo> ();
-        StartCoroutine (Twitter.API.GetTimeline(12, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.GetTimelineCallback(this.OnGetTimeLine)));
+        StartCoroutine (Twitter.API.GetTimeline(12, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.GetTimelineCallback(this.OnGetTimeline)));
     }
 
-    void OnGetTimeLine(bool success, string results)
+    void OnGetTimeline(bool success, string results)
     {
         print("OnGetTimeline - " + (success ? "succedded." : "failed."));
         var tweets = JSON.Parse(results);
@@ -180,7 +180,29 @@ public class TwitterHandler: MonoBehaviour {
         // var user = tweets[i]["user"];
         // string name = user["name"]; 
     }
-    /// //////////////////////////////////////////////////////////////////////////////////////////
+	/// //////////////////////////////////////////////////////////////////////////////////////////
+
+	public void StartPostRetweet(string id) {
+		Demo d = twitterHandler.GetComponent<Demo> ();
+		StartCoroutine (Twitter.API.PostRetweet(id, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.PostRetweetCallback(this.OnPostRetweet)));
+	}
+
+	void OnPostRetweet(bool success) {
+		print("OnPostRetweet - " + (success ? "succedded." : "failed."));
+	}
+
+	/// //////////////////////////////////////////////////////////////////////////////////////////
+
+	public void StartPostFavorite(string id) {
+		Demo d = twitterHandler.GetComponent<Demo> ();
+		StartCoroutine (Twitter.API.PostFavorite(id, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.PostFavoriteCallback(this.OnPostFavorite)));
+	}
+
+	void OnPostFavorite(bool success) {
+		print("OnPostFavorite - " + (success ? "succedded." : "failed."));
+	}
+
+	/// //////////////////////////////////////////////////////////////////////////////////////////
 
 
     // Loading Stuff

@@ -32,6 +32,9 @@ namespace Twitter
     public delegate void PostTweetCallback(bool success);
     public delegate void GetTimelineCallback(bool success, string results);
     public delegate void GetTrendsCallback(bool success, string results);
+	public delegate void PostRetweetCallback(bool success);
+	public delegate void PostFavoriteCallback(bool success);
+
 
     public class API
     {
@@ -220,6 +223,102 @@ namespace Twitter
                 }
             }
         }
+
+		private const string PostRetweetURL = "https://api.twitter.com/1.1/statuses/retweet/:id.json";
+
+		public static IEnumerator PostRetweet(string id, string consumerKey, string consumerSecret, AccessTokenResponse response, PostRetweetCallback callback)
+		{
+			Dictionary<string, string> parameters = new Dictionary<string, string>();
+			parameters.Add("id", id);
+
+			WWWForm form = new WWWForm();
+			form.AddField("id", id);
+
+			string url = PostRetweetURL.Replace (":id", id);
+
+			Dictionary<string, string> headers = new Dictionary<string, string>();
+			headers["Authorization"] = GetHeaderWithAccessToken("POST", url, consumerKey, consumerSecret, response, parameters);
+
+			WWW web = new WWW(url, form.data, headers);
+			yield return web;
+
+			if (!string.IsNullOrEmpty(web.error))
+			{
+				Debug.Log(string.Format("PostRetweet - failed. {0}\n{1}", web.error, web.text));
+				callback(false);
+			}
+			else
+			{
+				string error = Regex.Match(web.text, @"<error>([^&]+)</error>").Groups[1].Value;
+
+				if (!string.IsNullOrEmpty(error))
+				{
+					Debug.Log(string.Format("PostRetweet - failed. {0}", error));
+					callback(false);
+				}
+				else
+				{
+					callback(true);
+				}
+					
+			}
+
+		}
+
+		private const string PostFavoriteURL = "https://api.twitter.com/1.1/favorites/create.json";
+
+		public static IEnumerator PostFavorite(string id, string consumerKey, string consumerSecret, AccessTokenResponse response, PostFavoriteCallback callback)
+		{
+			string url = "https://api.twitter.com/1.1/favorites/create.json";
+
+			Dictionary<string, string> parameters = new Dictionary<string, string>();
+			parameters.Add("id", id);
+			//parameters.Add("include_entities", "false");
+
+
+			WWWForm form = new WWWForm();
+			form.AddField("id", id);
+			//form.AddField("include_entities", "false");
+
+			string appendURL = "id=" + id;
+
+			url = PostFavoriteURL + "?" + appendURL;
+				
+			Dictionary<string, string> headers = new Dictionary<string, string>();
+			headers["Authorization"] = GetHeaderWithAccessToken("POST", url, consumerKey, consumerSecret, response, parameters);
+
+
+			Debug.Log("Url posted to web is " + url);
+
+			WWW web = new WWW(url, null, headers);
+			yield return web;
+
+			if (!string.IsNullOrEmpty(web.error))
+			{
+				Debug.Log(string.Format("PostFavorite - failed. {0}\n{1}", web.error, web.text));
+				callback(false);
+			}
+			else
+			{
+				string error = Regex.Match(web.text, @"<error>([^&]+)</error>").Groups[1].Value;
+
+				if (!string.IsNullOrEmpty(error))
+				{
+					Debug.Log(string.Format("PostFavorite - failed. {0}", error));
+					callback(false);
+				}
+				else
+				{
+					callback(true);
+				}
+
+			}
+
+		}
+
+
+
+
 
 
 
