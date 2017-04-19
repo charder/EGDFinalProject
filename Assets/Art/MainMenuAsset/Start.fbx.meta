@@ -1,26 +1,19 @@
 fileFormatVersion: 2
-guid: 33018e8ecc29d0b488843e9818b53e94
-timeCreated: 1492573925
+guid: 7d3cedafa9f8e78499b4a6eb76aeb39e
+timeCreated: 1492573932
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: transform1
-    100002: //RootNode
-    100004: WebTrafficText
-    100006: WebTrafficText_MeshPart0
-    100008: WebTrafficText_MeshPart1
-    400000: transform1
-    400002: //RootNode
-    400004: WebTrafficText
-    400006: WebTrafficText_MeshPart0
-    400008: WebTrafficText_MeshPart1
-    2300000: WebTrafficText_MeshPart0
-    2300002: WebTrafficText_MeshPart1
-    3300000: WebTrafficText_MeshPart0
-    3300002: WebTrafficText_MeshPart1
-    4300000: WebTrafficText_MeshPart0
-    4300002: WebTrafficText_MeshPart1
+    100000: //RootNode
+    100002: Start
+    100004: transform1
+    400000: //RootNode
+    400002: Start
+    400004: transform1
+    2300000: Start
+    3300000: Start
+    4300000: Start
     9500000: //RootNode
   materials:
     importMaterials: 1

@@ -1,26 +1,26 @@
 fileFormatVersion: 2
-guid: 33018e8ecc29d0b488843e9818b53e94
-timeCreated: 1492573925
+guid: 4268c025dd98a814fb2c6458bbdac51d
+timeCreated: 1492573931
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: transform1
     100002: //RootNode
-    100004: WebTrafficText
-    100006: WebTrafficText_MeshPart0
-    100008: WebTrafficText_MeshPart1
+    100004: TwitterAccount
+    100006: TwitterAccount_MeshPart0
+    100008: TwitterAccount_MeshPart1
     400000: transform1
     400002: //RootNode
-    400004: WebTrafficText
-    400006: WebTrafficText_MeshPart0
-    400008: WebTrafficText_MeshPart1
-    2300000: WebTrafficText_MeshPart0
-    2300002: WebTrafficText_MeshPart1
-    3300000: WebTrafficText_MeshPart0
-    3300002: WebTrafficText_MeshPart1
-    4300000: WebTrafficText_MeshPart0
-    4300002: WebTrafficText_MeshPart1
+    400004: TwitterAccount
+    400006: TwitterAccount_MeshPart0
+    400008: TwitterAccount_MeshPart1
+    2300000: TwitterAccount_MeshPart0
+    2300002: TwitterAccount_MeshPart1
+    3300000: TwitterAccount_MeshPart0
+    3300002: TwitterAccount_MeshPart1
+    4300000: TwitterAccount_MeshPart0
+    4300002: TwitterAccount_MeshPart1
     9500000: //RootNode
   materials:
     importMaterials: 1
