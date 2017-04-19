@@ -83,7 +83,7 @@ public class MainMenuCameraScript : MonoBehaviour {
             }
         }
 
-        if (!CameraAnimator.GetBool("IsZoomed"))
+        if (!CameraAnimator.GetBool("IsZoomed") && !bEnteringNewScene)
         {
             if (Input.GetKeyDown(KeyCode.Return))
             {
