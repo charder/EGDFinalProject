@@ -16,6 +16,7 @@ public class ShowcaseCamera : MonoBehaviour {
 	int carControl; //which control set are you using for creating the car, used with switch statement
 	int carColor; //iterator for carColorOptions
 	int carModel; //iterator for carModelOptions
+	public GameObject createTweetUI;
 
 	// Use this for initialization
 	void Start () {
@@ -74,48 +75,42 @@ public class ShowcaseCamera : MonoBehaviour {
 			if (Input.GetKey (KeyCode.Q)) {
 				if (ManageMovement ()) {
 					creatingTweet = false;
+					createTweetUI.SetActive (false);
 				}
 			}
 			if (Input.GetKey (KeyCode.D)) {
 				if (ManageMovement ()) {
-					switch (carControl) {
-					case 0:
-						carColor++;
-						if (carColor >= carColorOptions.Length) {
-							carColor = 0;
-						}
-						break;
-					case 1:
-						carModel++;
-						if (carModel >= carModelOptions.Length) {
-							carModel = 0;
-						}
-						changeCar ();
-						break;
+					carColor++;
+					if (carColor >= carColorOptions.Length) {
+						carColor = 0;
 					}
+				}
+			}
+			if (Input.GetKey (KeyCode.S)) {
+				if (ManageMovement ()) {
+					carModel++;
+					if (carModel >= carModelOptions.Length) {
+						carModel = 0;
+					}
+					changeCar ();
 				}
 			}
 			if (Input.GetKey (KeyCode.A)) {
 				if (ManageMovement ()) {
-					switch (carControl) {
-					case 0:
-						carColor--;
-						if (carColor < 0) {
-							carColor = carColorOptions.Length - 1;
-						}
-						break;
-					case 1:
-						carModel--;
-						if (carModel < 0) {
-							carModel = carModelOptions.Length - 1;
-						}
-						changeCar ();
-						break;
+					carColor--;
+					if (carColor < 0) {
+						carColor = carColorOptions.Length - 1;
 					}
 				}
 			}
-			if (Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.S)) {
-				carControl = 1 - carControl;
+			if (Input.GetKey (KeyCode.W)) {
+				if (ManageMovement ()) {
+					carModel--;
+					if (carModel < 0) {
+						carModel = carModelOptions.Length - 1;
+					}
+					changeCar ();
+				}
 			}
 
 			//Color and Model update on the car
@@ -127,6 +122,10 @@ public class ShowcaseCamera : MonoBehaviour {
 				newMats [0] = carColorOptions [carColor];
 			}
 			carMesh.materials = newMats;
+
+			if (moveTime <= 0 && !createTweetUI.activeInHierarchy) {
+				createTweetUI.SetActive (true);
+			}
 		}
 		if (moveTime > 0) {
 			moveTime -= Time.deltaTime;
@@ -143,20 +142,9 @@ public class ShowcaseCamera : MonoBehaviour {
 
 	//Script used when creating a custom car in the  center showcase
 	void changeCar() {
-		int rollM = Random.Range(0,carModelOptions.Length);
 		Transform vehicleSpawn = showcaseCenter.myVehicle.transform;
 		Destroy (showcaseCenter.myVehicle);
-		showcaseCenter.myVehicle = (GameObject)Instantiate (carModelOptions [rollM], vehicleSpawn.position, vehicleSpawn.rotation);
+		showcaseCenter.myVehicle = (GameObject)Instantiate (carModelOptions [carModel], vehicleSpawn.position, vehicleSpawn.rotation);
 
-		int rollC = Random.Range(0,carColorOptions.Length);
-		//Color and Model update on the car
-		MeshRenderer carMesh = showcaseCenter.myVehicle.GetComponent<MeshRenderer>();
-		Material[] newMats = carMesh.materials;
-		if (newMats [0].name == "CarBumper (Instance)") {
-			newMats [1] = carColorOptions [rollC];
-		} else {
-			newMats [0] = carColorOptions [rollC];
-		}
-		carMesh.materials = newMats;
 	}
 }
