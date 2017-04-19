@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class ShowcaseCamera : MonoBehaviour {
 	public ShowcaseScript[] showcasePoints;
@@ -17,6 +19,7 @@ public class ShowcaseCamera : MonoBehaviour {
 	int carColor; //iterator for carColorOptions
 	int carModel; //iterator for carModelOptions
 	public GameObject createTweetUI;
+	InputField createTweetField; //input field used for writing a tweet, need reference for easier checking
 
 	// Use this for initialization
 	void Start () {
@@ -112,6 +115,9 @@ public class ShowcaseCamera : MonoBehaviour {
 					changeCar ();
 				}
 			}
+			if (Input.GetKey (KeyCode.Tab)) {
+				//STUFF <<<<<<<<<<
+			}
 
 			//Color and Model update on the car
 			MeshRenderer carMesh = showcaseCenter.myVehicle.GetComponent<MeshRenderer>();
@@ -125,6 +131,7 @@ public class ShowcaseCamera : MonoBehaviour {
 
 			if (moveTime <= 0 && !createTweetUI.activeInHierarchy) {
 				createTweetUI.SetActive (true);
+				createTweetField = GetComponentInChildren<InputField>();
 			}
 		}
 		if (moveTime > 0) {
