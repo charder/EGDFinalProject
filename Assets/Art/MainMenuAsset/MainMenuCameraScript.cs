@@ -42,7 +42,7 @@ public class MainMenuCameraScript : MonoBehaviour {
             FadeOutImage.color = new Color(0.0f, 0.0f, 0.0f, UpdatingAlpha);
         }
 
-        // Camera animations
+        // Press Start text
         if(CameraAnimator.GetBool("IsZoomed"))
         {
             StartText.color = new Color(255.0f, 255.0f, 255.0f, 0.0f);
@@ -59,13 +59,20 @@ public class MainMenuCameraScript : MonoBehaviour {
             }
         }
 
+        // Camera Animations
         if (Input.GetKeyDown("t"))
         {
             bool CurrentState = CameraAnimator.GetBool("ShouldZoom");
+
+            if (CurrentState)
+            {
+                TwitterPanel.SetActive(false);
+            }
+
             CameraAnimator.SetBool("ShouldZoom", !CurrentState);
         }
 
-        if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimation"))
+        if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimation") && !CameraAnimator.GetBool("IsZoomed"))
         {
             if (CameraAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 && !CameraAnimator.IsInTransition(0))
             {
@@ -74,7 +81,7 @@ public class MainMenuCameraScript : MonoBehaviour {
             }
         }
 
-        if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimationReverse"))
+        if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimationReverse") && CameraAnimator.GetBool("IsZoomed"))
         {
             if (CameraAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 && !CameraAnimator.IsInTransition(0))
             {
