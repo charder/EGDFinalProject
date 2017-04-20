@@ -29,29 +29,31 @@ public class TwitterHandler: MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		/*
-        if (Input.GetKeyDown (KeyCode.Q)) {
-            Debug.Log ("Getting tweets...");
-            StartGetHashtag ("#FakeNews", 5);
-        }
-
-        if (Input.GetKeyDown (KeyCode.W)) {
-            Debug.Log ("Getting trends...");
-            StartGetTrends ();
-        }
-
-        */
-
-        if (Input.GetKeyDown (KeyCode.E)) {
-            //Debug.Log ("Posting something to twitter...");
-			StartPostFavorite ("854142358216204290");
-            //StartGetTimeline();
-        }
-
-        if (Input.GetKeyDown (KeyCode.W)) {
-            //Debug.Log ("Posting something to twitter...");
-            StartGetTimeline();
-        }
+        
+//        if (Input.GetKeyDown (KeyCode.Q)) {
+//            Debug.Log ("Getting tweets...");
+//            //StartGetHashtag ("#FakeNews", 5);
+//
+//            StartPostTweet ("Fake News");
+//        }
+//
+//        if (Input.GetKeyDown (KeyCode.R)) {
+//            Debug.Log ("Retweeting...");
+//
+//            StartPostRetweet ("854142358216204290");
+//        }
+//            
+//
+//        if (Input.GetKeyDown (KeyCode.E)) {
+//            //Debug.Log ("Posting something to twitter...");
+//            StartPostFavorite ("854768245181689858");
+//            //StartGetTimeline();
+//        }
+//
+//        if (Input.GetKeyDown (KeyCode.W)) {
+//            //Debug.Log ("Posting something to twitter...");
+//            StartGetTimeline();
+//        }
 	}
 
     /// //////////////////////////////////////////////////////////////////////////////////////////
@@ -199,7 +201,7 @@ public class TwitterHandler: MonoBehaviour {
 	}
 
 	void OnPostFavorite(bool success) {
-		print("OnPostFavorite - " + (success ? "succedded." : "failed."));
+		print("OnPostFavorite - " + (success ? "succedded." : "failed. xoxo"));
 	}
 
 	/// //////////////////////////////////////////////////////////////////////////////////////////

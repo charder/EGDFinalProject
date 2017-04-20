@@ -269,50 +269,41 @@ namespace Twitter
 
 		public static IEnumerator PostFavorite(string id, string consumerKey, string consumerSecret, AccessTokenResponse response, PostFavoriteCallback callback)
 		{
-			string url = "https://api.twitter.com/1.1/favorites/create.json";
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("id", id);
 
-			Dictionary<string, string> parameters = new Dictionary<string, string>();
-			parameters.Add("id", id);
-			//parameters.Add("include_entities", "false");
+            // Add data to the form to post.
+            WWWForm form = new WWWForm();
+            form.AddField("id", id);
 
+            // HTTP header
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers["Authorization"] = GetHeaderWithAccessToken("POST", PostFavoriteURL, consumerKey, consumerSecret, response, parameters);
 
-			WWWForm form = new WWWForm();
-			form.AddField("id", id);
-			//form.AddField("include_entities", "false");
+            WWW web = new WWW(PostFavoriteURL, form.data, headers);
+            yield return web;
 
-			string appendURL = "id=" + id;
+            if (!string.IsNullOrEmpty(web.error))
+            {
+                Debug.Log(string.Format("PostFavorite - failed. {0}\n{1}", web.error, web.text));
+                callback(false);
+            }
+            else
+            {
+                string error = Regex.Match(web.text, @"<error>([^&]+)</error>").Groups[1].Value;
 
-			url = PostFavoriteURL + "?" + appendURL;
-				
-			Dictionary<string, string> headers = new Dictionary<string, string>();
-			headers["Authorization"] = GetHeaderWithAccessToken("POST", url, consumerKey, consumerSecret, response, parameters);
+                if (!string.IsNullOrEmpty(error))
+                {
+                    Debug.Log(string.Format("PostFavorite - failed. {0}", error));
+                    callback(false);
+                }
+                else
+                {
+                    callback(true);
+                }
 
-
-			Debug.Log("Url posted to web is " + url);
-
-			WWW web = new WWW(url, null, headers);
-			yield return web;
-
-			if (!string.IsNullOrEmpty(web.error))
-			{
-				Debug.Log(string.Format("PostFavorite - failed. {0}\n{1}", web.error, web.text));
-				callback(false);
-			}
-			else
-			{
-				string error = Regex.Match(web.text, @"<error>([^&]+)</error>").Groups[1].Value;
-
-				if (!string.IsNullOrEmpty(error))
-				{
-					Debug.Log(string.Format("PostFavorite - failed. {0}", error));
-					callback(false);
-				}
-				else
-				{
-					callback(true);
-				}
-
-			}
+                Debug.Log("PostTweet - " + web.text);
+            }
 
 		}
 
