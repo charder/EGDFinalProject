@@ -20,11 +20,13 @@ public class ShowcaseCamera : MonoBehaviour {
 	int carModel; //iterator for carModelOptions
 	public GameObject createTweetUI;
 	InputField createTweetField; //input field used for writing a tweet, need reference for easier checking
+	bool activeTweetText; //whether or not the player is editing the text
 
 	// Use this for initialization
 	void Start () {
 		moveTime = moveSeconds;
 		changeCar ();
+		createTweetField = GetComponentInChildren<InputField>();
 	}
 	
 	// Update is called once per frame
@@ -75,48 +77,58 @@ public class ShowcaseCamera : MonoBehaviour {
 				}
 			}
 		} else {
-			if (Input.GetKey (KeyCode.Q)) {
-				if (ManageMovement ()) {
-					creatingTweet = false;
-					createTweetUI.SetActive (false);
-				}
-			}
-			if (Input.GetKey (KeyCode.D)) {
-				if (ManageMovement ()) {
-					carColor++;
-					if (carColor >= carColorOptions.Length) {
-						carColor = 0;
+			if (!createTweetField.isFocused) {
+				if (Input.GetKey (KeyCode.Q)) {
+					if (ManageMovement ()) {
+						creatingTweet = false;
+						createTweetUI.SetActive (false);
 					}
 				}
-			}
-			if (Input.GetKey (KeyCode.S)) {
-				if (ManageMovement ()) {
-					carModel++;
-					if (carModel >= carModelOptions.Length) {
-						carModel = 0;
-					}
-					changeCar ();
-				}
-			}
-			if (Input.GetKey (KeyCode.A)) {
-				if (ManageMovement ()) {
-					carColor--;
-					if (carColor < 0) {
-						carColor = carColorOptions.Length - 1;
+				if (Input.GetKey (KeyCode.D)) {
+					if (ManageMovement ()) {
+						carColor++;
+						if (carColor >= carColorOptions.Length) {
+							carColor = 0;
+						}
 					}
 				}
-			}
-			if (Input.GetKey (KeyCode.W)) {
-				if (ManageMovement ()) {
-					carModel--;
-					if (carModel < 0) {
-						carModel = carModelOptions.Length - 1;
+				if (Input.GetKey (KeyCode.S)) {
+					if (ManageMovement ()) {
+						carModel++;
+						if (carModel >= carModelOptions.Length) {
+							carModel = 0;
+						}
+						changeCar ();
 					}
-					changeCar ();
 				}
-			}
-			if (Input.GetKey (KeyCode.Tab)) {
-				//STUFF <<<<<<<<<<
+				if (Input.GetKey (KeyCode.A)) {
+					if (ManageMovement ()) {
+						carColor--;
+						if (carColor < 0) {
+							carColor = carColorOptions.Length - 1;
+						}
+					}
+				}
+				if (Input.GetKey (KeyCode.W)) {
+					if (ManageMovement ()) {
+						carModel--;
+						if (carModel < 0) {
+							carModel = carModelOptions.Length - 1;
+						}
+						changeCar ();
+					}
+				}
+				if (Input.GetKey (KeyCode.Tab)) {
+					if (ManageMovement ()) {
+						EventSystem.current.SetSelectedGameObject (createTweetField.gameObject, null);
+					}
+				}
+			} else {
+				if (Input.GetKey (KeyCode.Tab)) {
+					if (ManageMovement ()) {
+						EventSystem.current.SetSelectedGameObject (null, null);
+					}
+				}
 			}
 
 			//Color and Model update on the car
