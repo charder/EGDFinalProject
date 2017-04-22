@@ -29,31 +29,15 @@ public class TwitterHandler: MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
-//        if (Input.GetKeyDown (KeyCode.Q)) {
-//            Debug.Log ("Getting tweets...");
-//            //StartGetHashtag ("#FakeNews", 5);
-//
-//            StartPostTweet ("Fake News");
+//        if (Input.GetKeyDown (KeyCode.Tab)) {
+//            ClearUserInfo ();
 //        }
-//
-//        if (Input.GetKeyDown (KeyCode.R)) {
-//            Debug.Log ("Retweeting...");
-//
-//            StartPostRetweet ("854142358216204290");
-//        }
-//            
-//
-//        if (Input.GetKeyDown (KeyCode.E)) {
-//            //Debug.Log ("Posting something to twitter...");
-//            StartPostFavorite ("854768245181689858");
-//            //StartGetTimeline();
-//        }
-//
-//        if (Input.GetKeyDown (KeyCode.W)) {
-//            //Debug.Log ("Posting something to twitter...");
-//            StartGetTimeline();
-//        }
+//        StartGetTimeline();
+//        StartPostRetweet ("854142358216204290");
+//        StartPostReply ("@The_Alpha_Kong IT'S YA BOY BOBBY HERE #FUCKEM", "854153398563872769");
+//        StartPostTweet ("Fake News");
+//        StartPostFavorite ("854768245181689858");
+//        StartGetHashtag ("FakeNews", 20);
 	}
 
     /// //////////////////////////////////////////////////////////////////////////////////////////
@@ -153,6 +137,18 @@ public class TwitterHandler: MonoBehaviour {
 
     /// //////////////////////////////////////////////////////////////////////////////////////////
 
+    public void StartPostReply(string text, string replyID) {
+        Demo d = twitterHandler.GetComponent<Demo> ();
+        StartCoroutine(Twitter.API.PostTweet(text, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse,
+            new Twitter.PostTweetCallback(this.OnPostTweet), replyID));
+    }
+
+    void OnPostReply(bool success) {
+        print("OnPostTweet - " + (success ? "succedded." : "failed."));
+    }
+
+    /// //////////////////////////////////////////////////////////////////////////////////////////
+
     public void StartGetTimeline() {
         Demo d = twitterHandler.GetComponent<Demo> ();
         StartCoroutine (Twitter.API.GetTimeline(12, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.GetTimelineCallback(this.OnGetTimeline)));
@@ -166,6 +162,10 @@ public class TwitterHandler: MonoBehaviour {
 //        for (int i = 0; i < tweets.Count; i++) {
 //            Debug.Log (tweets [i]["text"]);
 //        }
+
+//        Debug.Log(tweets[0]["text"]);
+//        var user = tweets [0] ["user"];
+//        Debug.Log (user["profile_image_url"]);
 
         //string tweets[i]["text"]
         //int tweets[i]["id"]
@@ -229,6 +229,16 @@ public class TwitterHandler: MonoBehaviour {
             log += "\n    TokenSecret : " + m_AccessTokenResponse.TokenSecret;
             print(log);
         }
+    }
+
+    public void ClearUserInfo()
+    {
+        PlayerPrefs.DeleteKey (PLAYER_PREFS_TWITTER_USER_ID);
+        PlayerPrefs.DeleteKey (PLAYER_PREFS_TWITTER_USER_SCREEN_NAME);
+        PlayerPrefs.DeleteKey (PLAYER_PREFS_TWITTER_USER_TOKEN);
+        PlayerPrefs.DeleteKey (PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET);
+
+        Debug.Log ("User info cleared");
     }
 
 }
