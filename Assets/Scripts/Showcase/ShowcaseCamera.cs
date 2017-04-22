@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class ShowcaseCamera : MonoBehaviour {
+public class ShowcaseCamera : CarDataPassage {
 	public ShowcaseScript[] showcasePoints;
 	int currentShowcase; //the current showcase the camera is on
 	public float moveSeconds; //how many seconds of movement between showcase locations
@@ -18,15 +18,27 @@ public class ShowcaseCamera : MonoBehaviour {
 	int carControl; //which control set are you using for creating the car, used with switch statement
 	int carColor; //iterator for carColorOptions
 	int carModel; //iterator for carModelOptions
+
 	public GameObject createTweetUI;
+	public GameObject createResponseUI;
 	InputField createTweetField; //input field used for writing a tweet, need reference for easier checking
+	InputField createReplyingField; //input field used for replying
 	bool activeTweetText; //whether or not the player is editing the text
+
+	int tweetOptionSelection; //iterator for tweetOptionCovers, and also determines which action is passed to the car upon creation
+	public GameObject[] tweetOptionCovers; //covers to highlight the current action the player will be performing if they start now
 
 	// Use this for initialization
 	void Start () {
 		moveTime = moveSeconds;
 		changeCar ();
-		createTweetField = GetComponentInChildren<InputField>();
+		createTweetField = createTweetUI.GetComponentInChildren<InputField>();
+		createReplyingField = createResponseUI.GetComponentInChildren<InputField> ();
+		createTweetUI.SetActive (false);
+
+		//Handle option selection (0 = Like, 1 = Retweet, 2 = Reply)
+		tweetOptionSelection = 0;
+		tweetOptionCovers [tweetOptionSelection].SetActive (false); 
 	}
 	
 	// Update is called once per frame
@@ -54,25 +66,60 @@ public class ShowcaseCamera : MonoBehaviour {
 
 		//Handle moving around the showcase (moveTime is a delay for moving between timeline points)
 		if (!creatingTweet) {
-			//Switch to creating new tweet
-			if (Input.GetKey (KeyCode.Q)) {
-				if (ManageMovement ()) {
-					creatingTweet = true;
-				}
-			}
-			if (Input.GetKey (KeyCode.D)) {
-				if (ManageMovement ()) {
-					currentShowcase++;
-					if (currentShowcase >= showcasePoints.Length) {
-						currentShowcase = 0;
+			if (!createReplyingField.isFocused) {
+				//Switch to creating new tweet
+				if (Input.GetKey (KeyCode.Q)) {
+					if (ManageMovement ()) {
+						creatingTweet = true;
+						createTweetUI.SetActive (true);
+						createResponseUI.SetActive (false);
 					}
 				}
-			}
-			if (Input.GetKey (KeyCode.A)) {
-				if (ManageMovement ()) {
-					currentShowcase--;
-					if (currentShowcase < 0) {
-						currentShowcase = showcasePoints.Length - 1;
+				if (Input.GetKey (KeyCode.D)) {
+					if (ManageMovement ()) {
+						currentShowcase++;
+						if (currentShowcase >= showcasePoints.Length) {
+							currentShowcase = 0;
+						}
+					}
+				}
+				if (Input.GetKey (KeyCode.A)) {
+					if (ManageMovement ()) {
+						currentShowcase--;
+						if (currentShowcase < 0) {
+							currentShowcase = showcasePoints.Length - 1;
+						}
+					}
+				}
+				if (Input.GetKey (KeyCode.W)) {
+					if (ManageMovement ()) {
+						tweetOptionCovers [tweetOptionSelection].SetActive (true);
+						tweetOptionSelection--;
+						if (tweetOptionSelection < 0) {
+							tweetOptionSelection = tweetOptionCovers.Length - 1;
+						}
+						tweetOptionCovers [tweetOptionSelection].SetActive (false);
+					}
+				}
+				if (Input.GetKey (KeyCode.S)) {
+					if (ManageMovement ()) {
+						tweetOptionCovers [tweetOptionSelection].SetActive (true);
+						tweetOptionSelection++;
+						if (tweetOptionSelection >= tweetOptionCovers.Length) {
+							tweetOptionSelection = 0;
+						}
+						tweetOptionCovers [tweetOptionSelection].SetActive (false);
+					}
+				}
+				if (Input.GetKey (KeyCode.Tab)) {
+					if (ManageMovement ()) {
+						EventSystem.current.SetSelectedGameObject (createReplyingField.gameObject, null);
+					}
+				}
+			} else {
+				if (Input.GetKey (KeyCode.Tab)) {
+					if (ManageMovement ()) {
+						EventSystem.current.SetSelectedGameObject (null, null);
 					}
 				}
 			}
@@ -82,6 +129,7 @@ public class ShowcaseCamera : MonoBehaviour {
 					if (ManageMovement ()) {
 						creatingTweet = false;
 						createTweetUI.SetActive (false);
+						createResponseUI.SetActive (true);
 					}
 				}
 				if (Input.GetKey (KeyCode.D)) {
@@ -140,11 +188,6 @@ public class ShowcaseCamera : MonoBehaviour {
 				newMats [0] = carColorOptions [carColor];
 			}
 			carMesh.materials = newMats;
-
-			if (moveTime <= 0 && !createTweetUI.activeInHierarchy) {
-				createTweetUI.SetActive (true);
-				createTweetField = GetComponentInChildren<InputField>();
-			}
 		}
 		if (moveTime > 0) {
 			moveTime -= Time.deltaTime;
@@ -164,6 +207,11 @@ public class ShowcaseCamera : MonoBehaviour {
 		Transform vehicleSpawn = showcaseCenter.myVehicle.transform;
 		Destroy (showcaseCenter.myVehicle);
 		showcaseCenter.myVehicle = (GameObject)Instantiate (carModelOptions [carModel], vehicleSpawn.position, vehicleSpawn.rotation);
+
+	}
+
+	//IMPORTANT: The CarData class is defined in the script this script extends: CarDataPassage.cs
+	void PassDataToCar(CarData myCar) {
 
 	}
 }
