@@ -45,5 +45,6 @@ public class DestinationManager : MonoBehaviour {
 		mm = FindObjectOfType<MissionManager> ();
 		mm.EndMission ();
 		mm.WinMission ();
+		Unset ();
 	}
 }

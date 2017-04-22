@@ -16,7 +16,7 @@ public class StartLine : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.tag == "Player") {
-			FindObjectOfType<MissionManager> ().StartMission ();
+			FindObjectOfType<MissionManager> ().StartMission (4);
 			gameObject.SetActive (false);
 		}
 	}

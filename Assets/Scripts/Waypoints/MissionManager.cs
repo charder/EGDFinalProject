@@ -24,6 +24,7 @@ public class MissionManager : MonoBehaviour {
 	public float[] missionTimes = new float[1];
 
 	private int currentMission = -1;
+	private int dIndex = 0;
 
 	public Text timer;
 	public Text remainingTime;
@@ -65,7 +66,6 @@ public class MissionManager : MonoBehaviour {
 			timerTimeRemaining -= Time.deltaTime;
 			timer.text = timerTimeRemaining.ToString ("F2");
 			if (timerTimeRemaining < 0) {
-				print ("YOU SUCK");
 				EndMission ();
 				FailMission ();
 			}
@@ -77,15 +77,17 @@ public class MissionManager : MonoBehaviour {
 		}
 	}
 
-	public void StartMission(){
-		timerObject.SetActive (true);
-		currentMission++;
-		endGoal = destinations [currentMission].GetComponent<DestinationManager>().goal.gameObject;
-		doingMission = true;
-		navArrow.SetActive (true);
-		destinations [currentMission].GetComponent<DestinationManager> ().Set (1);
-		timerStartTime = Time.time;
-		timerTimeRemaining = missionTimes [currentMission];
+	public void StartMission(int type){
+		if (!doingMission) {
+			timerObject.SetActive (true);
+			dIndex = Random.Range (0, 4);
+			endGoal = destinations [dIndex].GetComponent<DestinationManager>().goal.gameObject;
+			doingMission = true;
+			navArrow.SetActive (true);
+			destinations [dIndex].GetComponent<DestinationManager> ().Set (type);
+			timerStartTime = Time.time;
+			timerTimeRemaining = missionTimes [dIndex];
+		}
 	}
 
 	public void EndMission(){
