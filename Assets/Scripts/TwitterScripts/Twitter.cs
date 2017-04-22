@@ -176,7 +176,7 @@ namespace Twitter
 
         private const string PostTweetURL = "https://api.twitter.com/1.1/statuses/update.json";
 
-        public static IEnumerator PostTweet(string text, string consumerKey, string consumerSecret, AccessTokenResponse response, PostTweetCallback callback)
+        public static IEnumerator PostTweet(string text, string consumerKey, string consumerSecret, AccessTokenResponse response, PostTweetCallback callback, string replyID = null)
         {
             if (string.IsNullOrEmpty(text) || text.Length > 140)
             {
@@ -187,10 +187,17 @@ namespace Twitter
             else
             {
                 Dictionary<string, string> parameters = new Dictionary<string, string>();
+                WWWForm form = new WWWForm();
+
+                if (replyID != null) {
+                    parameters.Add ("in_reply_to_status_id", replyID);
+                    form.AddField ("in_reply_to_status_id", replyID);
+                }
+
                 parameters.Add("status", text);
 
                 // Add data to the form to post.
-                WWWForm form = new WWWForm();
+
                 form.AddField("status", text);
 
                 // HTTP header
@@ -452,8 +459,8 @@ namespace Twitter
             //these might have to be sorted alphabetically, with 'q' at the end...
             parameters.Add("count", num.ToString());
             parameters.Add("exclude_replies", "true");
-            parameters.Add("include_entities", "false");
-            parameters.Add("trim_user", "true");
+//            parameters.Add("include_entities", "true");
+//            parameters.Add("trim_user", "false");
 
             string appendURL = "";
             for (int i = 0; i < parameters.Count; i++)
