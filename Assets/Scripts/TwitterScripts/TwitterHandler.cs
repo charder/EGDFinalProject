@@ -52,14 +52,14 @@ public class TwitterHandler: MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown (KeyCode.Escape)) {
-            ClearUserInfo ();
-        }
-
-        if (Input.GetKeyDown (KeyCode.Tab)) {
-            Debug.Log("Starting a tweet...");
-            StartPostTweet ("Test tweet posted at " + System.DateTime.Now.TimeOfDay);
-        }
+//        if (Input.GetKeyDown (KeyCode.Escape)) {
+//            ClearUserInfo ();
+//        }
+//
+//        if (Input.GetKeyDown (KeyCode.Tab)) {
+//            Debug.Log("Starting a tweet...");
+//            StartPostTweet ("Test tweet posted at " + System.DateTime.Now.TimeOfDay);
+//        }
 //
 //        if (Input.GetKeyDown (KeyCode.LeftShift)) {
 //            StartPostTweet ("herpaderp");
