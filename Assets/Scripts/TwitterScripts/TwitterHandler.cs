@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
 using System.Collections.Generic;
+using System;
+using UnityEngine.UI;
 
 public class TwitterHandler: MonoBehaviour {
 
+    public GameObject displayText = null;
+    public GameObject urlText = null;
+    public GameObject pinInput = null;
+    public GameObject pinText = null;
 
     GameObject twitterHandler = null;
-    Twitter.AccessTokenResponse m_AccessTokenResponse = new Twitter.AccessTokenResponse();
+    Twitter.RequestTokenResponse m_RequestTokenResponse;
+    Twitter.AccessTokenResponse m_AccessTokenResponse;
 	public Dictionary<string, int> trends;
 	public List<string> trendKeys = new List<string> ();
 
@@ -20,17 +27,39 @@ public class TwitterHandler: MonoBehaviour {
     const string PLAYER_PREFS_TWITTER_USER_TOKEN        = "TwitterUserToken";
     const string PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET = "TwitterUserTokenSecret";
 
+    private const string CONSUMER_KEY = "bxF6XgC7nXVhEnGJPlLUkoA8c";
+    private const string CONSUMER_SECRET = "jfM8RmslKt1Iq7MxZf7xuJJiuoz3LxkLltN6uPs77aUOWCYNnH";
+
+    private static readonly string RequestTokenURL = "https://api.twitter.com/oauth/request_token";
+    private static readonly string AuthorizationURL = "https://api.twitter.com/oauth/authenticate?oauth_token={0}";
+    private static readonly string AccessTokenURL = "https://api.twitter.com/oauth/access_token";
+
+    public delegate void TinyURLCallback(bool success, string result, string longurl);
+
 	// Use this for initialization
 	void Start () {
         LoadTwitterUserInfo ();
         twitterHandler = this.gameObject;
 		StartGetTrends ();
+
+        urlText.GetComponent<Text> ().text = "";
+        pinInput.SetActive (false);
+
+        handleLogin ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-//        if (Input.GetKeyDown (KeyCode.Tab)) {
-//            ClearUserInfo ();
+        if (Input.GetKeyDown (KeyCode.Escape)) {
+            ClearUserInfo ();
+        }
+
+        if (Input.GetKeyDown (KeyCode.Tab)) {
+            StartPostTweet ("Test tweet posted at " + System.DateTime.Now.TimeOfDay);
+        }
+//
+//        if (Input.GetKeyDown (KeyCode.LeftShift)) {
+//            StartPostTweet ("herpaderp");
 //        }
 //        StartGetTimeline();
 //        StartPostRetweet ("854142358216204290");
@@ -40,11 +69,101 @@ public class TwitterHandler: MonoBehaviour {
 //        StartGetHashtag ("FakeNews", 20);
 	}
 
+    void handleLogin() {
+        urlText.GetComponent<Text> ().text = "";
+        pinInput.SetActive (false);
+
+        if (string.IsNullOrEmpty (CONSUMER_KEY) || string.IsNullOrEmpty (CONSUMER_SECRET)) {
+            // Game had no associated twitter app
+            displayText.GetComponent<Text>().text = "This apps permissions are not set, contact a developer.";
+        }
+        else if (string.IsNullOrEmpty (m_AccessTokenResponse.ScreenName)) {
+            // Not logged in, need to log in
+            displayText.GetComponent<Text>().text = "No user is logged in.";
+            StartCoroutine(Twitter.API.GetRequestToken(CONSUMER_KEY, CONSUMER_SECRET,
+                new Twitter.RequestTokenCallback(this.OnRequestTokenCallback)));
+        }
+        else {
+            // have app stuff and we are theoretically logged in, check
+            displayText.GetComponent<Text>().text = "verifying...";
+            StartGetVerify();
+        }
+    }
+
+    void OnRequestTokenCallback(bool success, Twitter.RequestTokenResponse response)
+    {
+        if (success)
+        {
+            string log = "OnRequestTokenCallback - succeeded";
+            log += "\n    Token : " + response.Token;
+            log += "\n    TokenSecret : " + response.TokenSecret;
+            print(log);
+
+            m_RequestTokenResponse = response;
+
+            StartCoroutine(GetTinyUrl(string.Format (AuthorizationURL, response.Token), this.OnTinyURLCallback));
+
+        }
+        else
+        {
+            print("OnRequestTokenCallback - failed.");
+            urlText.GetComponent<Text> ().text = "";
+            pinInput.SetActive (false);
+        }
+    }
+
+    void OnAccessTokenCallback(bool success, Twitter.AccessTokenResponse response)
+    {
+        if (success)
+        {
+            string log = "OnAccessTokenCallback - succeeded";
+            log += "\n    UserId : " + response.UserId;
+            log += "\n    ScreenName : " + response.ScreenName;
+            log += "\n    Token : " + response.Token;
+            log += "\n    TokenSecret : " + response.TokenSecret;
+            print(log);
+
+            m_AccessTokenResponse = response;
+
+            PlayerPrefs.SetString(PLAYER_PREFS_TWITTER_USER_ID, response.UserId);
+            PlayerPrefs.SetString(PLAYER_PREFS_TWITTER_USER_SCREEN_NAME, response.ScreenName);
+            PlayerPrefs.SetString(PLAYER_PREFS_TWITTER_USER_TOKEN, response.Token);
+            PlayerPrefs.SetString(PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET, response.TokenSecret);
+        }
+        else
+        {
+            print("OnAccessTokenCallback - failed.");
+        }
+
+        handleLogin ();
+    }
+        
+    public void EnterPIN() {
+        StartCoroutine(Twitter.API.GetAccessToken(CONSUMER_KEY, CONSUMER_SECRET, m_RequestTokenResponse.Token, pinText.GetComponent<Text>().text,
+            new Twitter.AccessTokenCallback(this.OnAccessTokenCallback)));
+    }
+
+    void StartGetVerify() {
+        StartCoroutine(Twitter.API.GetVerify(CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse,
+            new Twitter.GetVerifyCallback(this.OnGetVerify)));
+    }
+
+    void OnGetVerify(bool success, string results) {
+        print("OnGetVerify - " + (success ? "succedded." : "failed."));
+
+        if (success) {
+            var r = JSON.Parse (results);
+            displayText.GetComponent<Text>().text = "@" + r ["screen_name"] + " was verified!";
+        }
+        else {
+            displayText.GetComponent<Text>().text = "User could not be verified, please log out.";
+        }
+    }
+
     /// //////////////////////////////////////////////////////////////////////////////////////////
     public void StartGetTrends()
     {
-        Demo d = twitterHandler.GetComponent<Demo> ();
-        StartCoroutine(Twitter.API.GetTrends(d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse,
+        StartCoroutine(Twitter.API.GetTrends(CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse,
             new Twitter.GetTrendsCallback(this.OnGetTrends)));
     }
 
@@ -87,7 +206,6 @@ public class TwitterHandler: MonoBehaviour {
 
     public void StartGetHashtag(string text, int num)
     {
-        Demo d = twitterHandler.GetComponent<Demo> ();
         if( string.IsNullOrEmpty(text) )
         {
             Debug.LogWarning("StartGetHashtag: no hashtag.");
@@ -95,7 +213,7 @@ public class TwitterHandler: MonoBehaviour {
         }
 
         if (num > 0) {
-            StartCoroutine (Twitter.API.GetHashtag (text, num, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse,
+            StartCoroutine (Twitter.API.GetHashtag (text, num, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse,
                 new Twitter.GetTimelineCallback (this.OnGetHashtag)));
         }
     }
@@ -124,8 +242,7 @@ public class TwitterHandler: MonoBehaviour {
     /// //////////////////////////////////////////////////////////////////////////////////////////
 
     public void StartPostTweet(string text) {
-        Demo d = twitterHandler.GetComponent<Demo> ();
-        StartCoroutine(Twitter.API.PostTweet(text, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse,
+        StartCoroutine(Twitter.API.PostTweet(text, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse,
             new Twitter.PostTweetCallback(this.OnPostTweet)));
     }
 
@@ -138,8 +255,7 @@ public class TwitterHandler: MonoBehaviour {
     /// //////////////////////////////////////////////////////////////////////////////////////////
 
     public void StartPostReply(string text, string replyID) {
-        Demo d = twitterHandler.GetComponent<Demo> ();
-        StartCoroutine(Twitter.API.PostTweet(text, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse,
+        StartCoroutine(Twitter.API.PostTweet(text, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse,
             new Twitter.PostTweetCallback(this.OnPostTweet), replyID));
     }
 
@@ -150,8 +266,7 @@ public class TwitterHandler: MonoBehaviour {
     /// //////////////////////////////////////////////////////////////////////////////////////////
 
     public void StartGetTimeline() {
-        Demo d = twitterHandler.GetComponent<Demo> ();
-        StartCoroutine (Twitter.API.GetTimeline(12, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.GetTimelineCallback(this.OnGetTimeline)));
+        StartCoroutine (Twitter.API.GetTimeline(12, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.GetTimelineCallback(this.OnGetTimeline)));
     }
 
     void OnGetTimeline(bool success, string results)
@@ -185,8 +300,7 @@ public class TwitterHandler: MonoBehaviour {
 	/// //////////////////////////////////////////////////////////////////////////////////////////
 
 	public void StartPostRetweet(string id) {
-		Demo d = twitterHandler.GetComponent<Demo> ();
-		StartCoroutine (Twitter.API.PostRetweet(id, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.PostRetweetCallback(this.OnPostRetweet)));
+		StartCoroutine (Twitter.API.PostRetweet(id, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.PostRetweetCallback(this.OnPostRetweet)));
 	}
 
 	void OnPostRetweet(bool success) {
@@ -196,8 +310,7 @@ public class TwitterHandler: MonoBehaviour {
 	/// //////////////////////////////////////////////////////////////////////////////////////////
 
 	public void StartPostFavorite(string id) {
-		Demo d = twitterHandler.GetComponent<Demo> ();
-		StartCoroutine (Twitter.API.PostFavorite(id, d.CONSUMER_KEY, d.CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.PostFavoriteCallback(this.OnPostFavorite)));
+		StartCoroutine (Twitter.API.PostFavorite(id, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.PostFavoriteCallback(this.OnPostFavorite)));
 	}
 
 	void OnPostFavorite(bool success) {
@@ -238,7 +351,40 @@ public class TwitterHandler: MonoBehaviour {
         PlayerPrefs.DeleteKey (PLAYER_PREFS_TWITTER_USER_TOKEN);
         PlayerPrefs.DeleteKey (PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET);
 
+        m_AccessTokenResponse = new Twitter.AccessTokenResponse ();
+        m_RequestTokenResponse = null;
+
         Debug.Log ("User info cleared");
+
+        handleLogin ();
+    }
+
+    private const string TinyURLCreateURL = "tinyurl.com/api-create.php?url=";
+
+    public static IEnumerator GetTinyUrl(string longurl, TinyURLCallback callback) {
+        WWW web = new WWW( TinyURLCreateURL + longurl, null, null);
+        yield return web;
+
+        if (!string.IsNullOrEmpty (web.error)) {
+            Debug.Log (string.Format ("TinyURL - failed. {0}\n{1}", web.error, web.text));
+            callback (false, web.text, longurl);
+        }
+        else {
+            callback (true, web.text, longurl);
+        }
+    }
+
+    void OnTinyURLCallback(bool success, string result, string longurl) {
+        if (success) {
+            print("TinyURL - " + (success ? "succedded." : "failed."));
+            Debug.Log (longurl + " condensed to " + result);
+            urlText.GetComponent<Text> ().text = result;
+            pinInput.SetActive (true);
+        }
+        else {
+            urlText.GetComponent<Text> ().text = "";
+            pinInput.SetActive (false);
+        }
     }
 
 }
