@@ -14,8 +14,8 @@ public class TwitterHandler: MonoBehaviour {
     public GameObject pinText = null;
 
     GameObject twitterHandler = null;
-    Twitter.RequestTokenResponse m_RequestTokenResponse;
-    Twitter.AccessTokenResponse m_AccessTokenResponse;
+    static Twitter.RequestTokenResponse m_RequestTokenResponse;
+    static Twitter.AccessTokenResponse m_AccessTokenResponse;
 	public Dictionary<string, int> trends;
 	public List<string> trendKeys = new List<string> ();
 
@@ -45,7 +45,9 @@ public class TwitterHandler: MonoBehaviour {
         urlText.GetComponent<Text> ().text = "";
         pinInput.SetActive (false);
 
-        handleLogin ();
+        if (!(displayText == null || urlText == null || pinInput == null || pinText == null)) {
+            handleLogin ();
+        }
 	}
 	
 	// Update is called once per frame
@@ -55,6 +57,7 @@ public class TwitterHandler: MonoBehaviour {
         }
 
         if (Input.GetKeyDown (KeyCode.Tab)) {
+            Debug.Log("Starting a tweet...");
             StartPostTweet ("Test tweet posted at " + System.DateTime.Now.TimeOfDay);
         }
 //
