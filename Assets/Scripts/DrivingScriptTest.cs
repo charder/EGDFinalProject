@@ -9,6 +9,9 @@ public class DrivingScriptTest: MonoBehaviour {
 	float topSpeed;
 	float topSpeedMod;
 	public float rotateSpeed;
+	//Acceleration and Decceleration paired with speedCurrent and topSpeedMod for driving
+	public float acceleration;
+	public float decceleration;
 	float rotateCurrent;
 	float topRotate;
 	float moveDir; //direction of movement (forward/backward for correct driving control)
@@ -40,13 +43,16 @@ public class DrivingScriptTest: MonoBehaviour {
 	float sustainPitch = 0.1f; //pitch of sustain sound (makes it go up and down in rev)
 	float sustainPitchBonus = 0; //bonus added to sustain sound from boosting
 
+	public float collisionForce; //required force to play collision sound
+	public AudioSource collisionSound;
+
 	bool grounded = false; //whether or not the car is on the ground
 	// Use this for initialization
 	void Start () {
 		myBody = this.GetComponent<Rigidbody> ();
 		moveDir = 1;
 		topSpeed = speed;
-		topSpeedMod = topSpeed; // modified top speed (changed by sharp turns)
+		topSpeedMod = topSpeed; // modified top speed (changed by sharp turns and boost)
 		topRotate = rotateSpeed;
 	}
 	
@@ -69,6 +75,7 @@ public class DrivingScriptTest: MonoBehaviour {
 		}
 
 		//Slow over time
+		/*
 		else {
 			if (Mathf.Abs(speedCurrent) < 1) {
 				speedCurrent = 0;
@@ -80,6 +87,7 @@ public class DrivingScriptTest: MonoBehaviour {
 				}
 			}
 		}
+		*/
 
 		//drifting/slowing
 		float leftTrigger = Input.GetAxis ("LT");
@@ -95,10 +103,6 @@ public class DrivingScriptTest: MonoBehaviour {
 			myBody.angularDrag = regularAngDrag;
 			//topRotate = rotateSpeed;
 			topSpeedMod = topSpeed;
-		}
-			
-		if (Mathf.Abs(speedCurrent) > topSpeedMod) {
-			speedCurrent = topSpeedMod * Mathf.Sign(speedCurrent);
 		}
 
 		//rotation adjustment (keep upright whenever possible)
@@ -122,9 +126,14 @@ public class DrivingScriptTest: MonoBehaviour {
 			boostCover.color = boostingColor;
 			boostTime -= Time.deltaTime;
 			sustainPitchBonus = 0.2f;
-			myBody.AddForce (-transform.right * boostAmount * Time.deltaTime * (myBody.drag/groundedDrag), ForceMode.VelocityChange);
+			topSpeedMod = 1.5f * topSpeed; //50% increase in boost
+			//myBody.AddForce (-transform.right * boostAmount * Time.deltaTime * (myBody.drag/groundedDrag), ForceMode.VelocityChange);
 		}
-		soundCarSustain.pitch = sustainPitch + sustainPitchBonus;
+
+		if (Mathf.Abs(speedCurrent) > topSpeedMod) {
+			speedCurrent -= Mathf.Min (speedCurrent - topSpeedMod, decceleration*Time.deltaTime);
+		}
+		soundCarSustain.pitch = sustainPitch;
 	}
 
 	void FixedUpdate() {
@@ -138,21 +147,24 @@ public class DrivingScriptTest: MonoBehaviour {
 		//Drive
 		if (moveDir == 1 && (Input.GetKey (KeyCode.W) || (Input.GetAxis ("RT") > 0.4f)) && grounded) {
 			if (speedCurrent < topSpeedMod) {
-				sustainPitch = 0.3f;
-				myBody.AddForce (-transform.right * topSpeedMod, ForceMode.VelocityChange);
-				//speedCurrent += Mathf.Min (0.2f * (topSpeed - speedCurrent), 0.5f);
+				speedCurrent += Mathf.Min (topSpeedMod - speedCurrent, acceleration*Time.deltaTime);
 			}
+			sustainPitch = 0.1f + 0.2f * (speedCurrent/topSpeed);
+			myBody.AddForce (-transform.right * speedCurrent, ForceMode.VelocityChange);
 		}
 		//Reverse
 		else if (moveDir == -1 && (Input.GetKey (KeyCode.S) || (Input.GetAxis ("RT") > 0.4f)) && grounded) {
 			if (speedCurrent > -topSpeedMod) {
-				sustainPitch = 0.2f;
-				myBody.AddForce (transform.right * topSpeedMod, ForceMode.VelocityChange);
-				//speedCurrent += Mathf.Max (0.2f * (-topSpeed - speedCurrent), -0.5f);
+				speedCurrent += Mathf.Min (topSpeedMod - speedCurrent, acceleration*Time.deltaTime);
 			}
+			sustainPitch = 0.1f + 0.1f * (speedCurrent/topSpeed);
+			myBody.AddForce (transform.right * speedCurrent, ForceMode.VelocityChange);
 		} else {
 			if (sustainPitch > 0.1f) {
 				sustainPitch = Mathf.Max (0.1f, sustainPitch - 0.4f * Time.fixedDeltaTime);
+			}
+			if (speedCurrent > 0 && speedCurrent <= topSpeedMod) {
+				speedCurrent -= Mathf.Min (speedCurrent, decceleration * Time.deltaTime);
 			}
 		}
 		//Turn Left
@@ -184,5 +196,13 @@ public class DrivingScriptTest: MonoBehaviour {
 
 	void OnTriggerExit(Collider other) {
 		grounded = false;
+	}
+
+	void OnCollisionEnter(Collision collision) {
+		if (collision.relativeVelocity.magnitude > collisionForce) {
+			AudioSource.PlayClipAtPoint (collisionSound.clip, collision.contacts [0].point);
+			speedCurrent *= 0.6f; //sharp speed reduction upon hitting objects
+
+		}
 	}
 }
