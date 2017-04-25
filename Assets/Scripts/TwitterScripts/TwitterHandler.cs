@@ -13,6 +13,8 @@ public class TwitterHandler: MonoBehaviour {
     public GameObject pinInput = null;
     public GameObject pinText = null;
 
+    public GameObject tweetTest = null;
+
     GameObject twitterHandler = null;
     static Twitter.RequestTokenResponse m_RequestTokenResponse;
     static Twitter.AccessTokenResponse m_AccessTokenResponse;
@@ -55,6 +57,13 @@ public class TwitterHandler: MonoBehaviour {
 //        if (Input.GetKeyDown (KeyCode.Escape)) {
 //            ClearUserInfo ();
 //        }
+
+        if (Input.GetKeyDown (KeyCode.Tab)) {
+            Debug.Log ("HERE WE GO");
+            string url = "https://pbs.twimg.com/profile_images/848712566834593793/uRee6rwf.jpg";
+            StartCoroutine (GetImage (url));
+
+        }
 //
 //        if (Input.GetKeyDown (KeyCode.Tab)) {
 //            Debug.Log("Starting a tweet...");
@@ -71,6 +80,24 @@ public class TwitterHandler: MonoBehaviour {
 //        StartPostFavorite ("854768245181689858");
 //        StartGetHashtag ("FakeNews", 20);
 	}
+
+    //This is for testing plz no bully
+    IEnumerator GetImage(string url)
+    {
+        Texture2D tex;
+        WWW www = new WWW(url);
+
+        //Wait for the Download
+        yield return www;
+
+        if (!string.IsNullOrEmpty(www.error))
+            Debug.Log("WWW Error: " + www.error);
+        else
+        {
+            tweetTest.GetComponent<RawImage> ().texture = www.texture;
+            Debug.Log ("Great Success!");
+        }
+    }
 
     void handleLogin() {
         urlText.GetComponent<Text> ().text = "";
