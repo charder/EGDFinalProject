@@ -17,7 +17,7 @@ public class MainMenuCameraScript : MonoBehaviour {
 
         SetInputField();
         LoginButton.onClick.AddListener(LoginButtonClicked);
-        EnterPINButton.onClick.AddListener(TwitterHandler.EnterPIN);
+        EnterPINButton.onClick.AddListener(EnterPINButtonClicked);
         AccountInputField.onEndEdit.AddListener(AccountEdited);
         PasswordInputField.onEndEdit.AddListener(PasswordEdited);
     }
@@ -119,7 +119,7 @@ public class MainMenuCameraScript : MonoBehaviour {
             }
             else if (CameraAnimator.GetBool("IsZoomed") && bIsPinned)
             {
-                TwitterHandler.EnterPIN();
+                EnterPINButtonClicked();
             }
         }
     }
@@ -139,7 +139,18 @@ public class MainMenuCameraScript : MonoBehaviour {
         PINPanel.SetActive(true);
 
         bIsPinned = true;
-        Application.OpenURL(TwitterHandler.urlText.text);
+        if (TwitterHandler.urlText.text.Length > 1)
+        {
+            Application.OpenURL(TwitterHandler.urlText.text);
+        }
+    }
+
+    void EnterPINButtonClicked()
+    {
+        if (TwitterHandler.urlText.text.Length > 1)
+        {
+            TwitterHandler.EnterPIN();
+        }
     }
 
     void AccountEdited(string value)
