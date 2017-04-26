@@ -48,7 +48,7 @@ public class MainMenuCameraScript : MonoBehaviour {
             if (UpdatingAlpha >= 0.9)
             {
                 // Enter new Scene
-                SceneManager.LoadScene("Scenes/ModifiedCity");
+                SceneManager.LoadScene("Scenes/ShowcaseScene");
             }
         }
 
