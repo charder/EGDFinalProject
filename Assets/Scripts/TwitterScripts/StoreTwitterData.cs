@@ -266,15 +266,16 @@ public class StoreTwitterData : MonoBehaviour {
 	/// //////////////////////////////////////////////////////////////////////////////////////////
 
 	public void StartGetTimeline() {
-		StartCoroutine (Twitter.API.GetTimeline(21, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.GetTimelineCallback(this.OnGetTimeline)));
+		StartCoroutine (Twitter.API.GetTimeline(26, CONSUMER_KEY, CONSUMER_SECRET, m_AccessTokenResponse, new Twitter.GetTimelineCallback(this.OnGetTimeline)));
 	}
 
 	void OnGetTimeline(bool success, string results)
 	{
 		print("OnGetTimeline - " + (success ? "succedded." : "failed."));
 		var tweets = JSON.Parse(results);
-		twitterTimeline = new TwitterTweetPlus[21];
+		twitterTimeline = new TwitterTweetPlus[26];
 
+		print ("How many tweets we working with here? " + tweets.Count);
 		for (int i = 0; i < tweets.Count; i++) {
 			twitterTimeline [i] = new TwitterTweetPlus ();
 			twitterTimeline [i].tweetUser = tweets [i] ["user"]["name"];
