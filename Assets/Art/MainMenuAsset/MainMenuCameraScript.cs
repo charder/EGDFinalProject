@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MainMenuCameraScript : MonoBehaviour {
 
@@ -11,6 +12,9 @@ public class MainMenuCameraScript : MonoBehaviour {
         UpdatingAlpha = 0.0f;
         bFadeOut = false;
         TwitterPanel.SetActive(false);
+
+        SetInputField();
+        LoginButton.onClick.AddListener(LoginButtonClicked);
     }
 	
 	// Update is called once per frame
@@ -40,6 +44,11 @@ public class MainMenuCameraScript : MonoBehaviour {
         if(bEnteringNewScene)
         {
             FadeOutImage.color = new Color(0.0f, 0.0f, 0.0f, UpdatingAlpha);
+            if (UpdatingAlpha >= 0.9)
+            {
+                // Enter new Scene
+                SceneManager.LoadScene("Scenes/ModifiedCity");
+            }
         }
 
         // Press Start text
@@ -60,16 +69,15 @@ public class MainMenuCameraScript : MonoBehaviour {
         }
 
         // Camera Animations
-        if (Input.GetKeyDown("t"))
+        if (Input.GetKeyDown("t") && !CameraAnimator.GetBool("IsZoomed"))
         {
-            bool CurrentState = CameraAnimator.GetBool("ShouldZoom");
+            CameraAnimator.SetBool("ShouldZoom", true);
+        }
 
-            if (CurrentState)
-            {
-                TwitterPanel.SetActive(false);
-            }
-
-            CameraAnimator.SetBool("ShouldZoom", !CurrentState);
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CameraAnimator.SetBool("ShouldZoom", false);
+            TwitterPanel.SetActive(false);
         }
 
         if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimation") && !CameraAnimator.GetBool("IsZoomed"))
@@ -102,10 +110,27 @@ public class MainMenuCameraScript : MonoBehaviour {
         }
     }
 
+    void SetInputField()
+    {
+
+    }
+
+    void LoginButtonClicked()
+    {
+
+    }
+
+
     public Text StartText;
     public Image FadeOutImage;
     public GameObject TwitterPanel;
 
+    public Button LoginButton;
+    public InputField AccountInputField;
+    public InputField PasswordInputField;
+
+    public string Account { get; set; }
+    public string Password { get; set; }
     private bool bEnteringNewScene;
     private bool bFadeOut;
     private float UpdatingAlpha;
