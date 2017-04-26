@@ -15,6 +15,8 @@ public class TwitterHandler: MonoBehaviour {
 
     public GameObject tweetTest = null;
 
+    public bool bIsReady = false;
+
     GameObject twitterHandler = null;
     static Twitter.RequestTokenResponse m_RequestTokenResponse;
     static Twitter.AccessTokenResponse m_AccessTokenResponse;
@@ -184,6 +186,7 @@ public class TwitterHandler: MonoBehaviour {
         if (success) {
             var r = JSON.Parse (results);
             displayText.GetComponent<Text>().text = "@" + r ["screen_name"] + " was verified!";
+            bIsReady = true;
         }
         else {
             displayText.GetComponent<Text>().text = "User could not be verified, please log out.";
