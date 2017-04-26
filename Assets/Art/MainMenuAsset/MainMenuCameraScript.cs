@@ -15,11 +15,12 @@ public class MainMenuCameraScript : MonoBehaviour {
 
         SetInputField();
         LoginButton.onClick.AddListener(LoginButtonClicked);
+        AccountInputField.onEndEdit.AddListener(AccountEdited);
+        PasswordInputField.onEndEdit.AddListener(PasswordEdited);
     }
 	
 	// Update is called once per frame
 	void Update () {
-
         // The fade in fade out for "press start"
         if (UpdatingAlpha < 1.0f && !bFadeOut)
         {
@@ -112,12 +113,26 @@ public class MainMenuCameraScript : MonoBehaviour {
 
     void SetInputField()
     {
+        Account = "EGDFinal";
+        Password = "Idontknowyet";
 
+        AccountInputField.text = Account;
+        PasswordInputField.text = "********";
     }
 
     void LoginButtonClicked()
     {
 
+    }
+
+    void AccountEdited(string value)
+    {
+        Account = value;
+    }
+
+    void PasswordEdited(string value)
+    {
+        Password = value;
     }
 
 
