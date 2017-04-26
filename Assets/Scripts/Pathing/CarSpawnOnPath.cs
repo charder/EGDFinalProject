@@ -16,10 +16,10 @@ public class CarSpawnOnPath : MonoBehaviour {
 	bool spawnStarted; //whether the script has started spawning
 	private float timeTrack; 
 	bool stop = false;
-	TwitterHandler twitHandler; //reference to the twitter handler script
+	StoreTwitterData twitHandler; //reference to the twitter handler script
 	// Use this for initialization
 	void Start () {
-		twitHandler = FindObjectOfType<TwitterHandler> ();
+		twitHandler = FindObjectOfType<StoreTwitterData> ();
 		spawnStarted = false;
 		startDelay *= -1; //switch to negative value for countdown
 		timeTrack = 0;
@@ -65,8 +65,8 @@ public class CarSpawnOnPath : MonoBehaviour {
 		}
 
 		tmp.GetComponentInChildren<MeshRenderer> ().materials = updatedMat;
-		int rollT = Random.Range (0, twitHandler.trendKeys.Count); //roll for trending topic to put on car <<<<<<< TEMPORARY?
-		tmp.GetComponentInChildren<TextMesh>().text = twitHandler.trendKeys[rollT];
+		int rollT = Random.Range (0, twitHandler.twitterTrends.Length); //roll for trending topic to put on car <<<<<<< TEMPORARY?
+		tmp.GetComponentInChildren<TextMesh>().text = twitHandler.twitterTrends[rollT].trendStr;
 		carTmp.SetPathObject (pathToFollow);
 	}
 }

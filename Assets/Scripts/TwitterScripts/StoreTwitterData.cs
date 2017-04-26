@@ -7,7 +7,7 @@ using System;
 using UnityEngine.UI;
 
 public class StoreTwitterData : MonoBehaviour {
-
+	bool created = false; //whether or not this was the scene this object was created in
 	GameObject twitterHandler = null;
 	static Twitter.RequestTokenResponse m_RequestTokenResponse;
 	static Twitter.AccessTokenResponse m_AccessTokenResponse;
@@ -37,11 +37,19 @@ public class StoreTwitterData : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		LoadTwitterUserInfo ();
-		twitterHandler = this.gameObject;
-		//StartGetTrends ();
-		StartGetTimeline();
-		print ("A SINK? " + twitterTimeline.Length);
+		print (FindObjectsOfType<StoreTwitterData> ().Length);
+
+		if (!created && FindObjectsOfType<StoreTwitterData>().Length == 1) {
+			DontDestroyOnLoad (transform.gameObject);
+			LoadTwitterUserInfo ();
+			twitterHandler = this.gameObject;
+			StartGetTrends ();
+			StartGetTimeline ();
+			created = true;
+		} else if (!created) {
+			Destroy (this.gameObject);
+		}
+
 	}
 
 	// Update is called once per frame
@@ -161,8 +169,8 @@ public class StoreTwitterData : MonoBehaviour {
 		foreach (var value in trends.Values) {
 			trendValues.Add (value);
 		}
-		twitterTrends = new TwitterTrend [50];
-		for (int i = 0; i < 1; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 1 TREND ATM
+		twitterTrends = new TwitterTrend [3];
+		for (int i = 0; i < 3; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 1 TREND ATM
 			twitterTrends[i] = new TwitterTrend();
 			twitterTrends[i].trendStr = trendKeys [i];
 			twitterTrends[i].trendVolume = trendValues [i];

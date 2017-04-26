@@ -7,11 +7,15 @@ public class carSpawnPoint : MonoBehaviour {
 	public GameObject[] carPrefabs; //which car prefab to spawn
 	public Material[] carMaterials;
 	public int startNode; //node on the path the spawned car will start on
-	TwitterHandler twitHandler; //reference to the twitter handler script
+
+	//Twitter stuff
+	StoreTwitterData twitHandler; //reference to the twitter handler script
+	public TwitterTrend thisTrend;
+
 	float delaySpawn = 2f;
 	// Use this for initialization
 	void Awake () {
-		twitHandler = FindObjectOfType<TwitterHandler> ();
+		twitHandler = FindObjectOfType<StoreTwitterData> ();
 		//spawnCar ();
 	}
 
@@ -44,8 +48,9 @@ public class carSpawnPoint : MonoBehaviour {
 		}
 
 		tmp.GetComponentInChildren<MeshRenderer> ().materials = updatedMat;
-		int rollT = Random.Range (0, twitHandler.trendKeys.Count); //roll for trending topic to put on car <<<<<<< TEMPORARY?
-		tmp.GetComponentInChildren<TextMesh>().text = twitHandler.trendKeys[rollT];
+		int rollT = Random.Range (0, twitHandler.twitterTrends.Length); //roll for trending topic to put on car <<<<<<< TEMPORARY?
+		thisTrend = twitHandler.twitterTrends[rollT];
+		tmp.GetComponentInChildren<TextMesh> ().text = twitHandler.twitterTrends [rollT].trendStr;
 		carTmp.SetPathObject (pathToFollow);
 		carTmp.currentPoint = startNode;
 	}
