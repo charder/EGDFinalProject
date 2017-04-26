@@ -48,9 +48,11 @@ public class carSpawnPoint : MonoBehaviour {
 		}
 
 		tmp.GetComponentInChildren<MeshRenderer> ().materials = updatedMat;
-		int rollT = Random.Range (0, twitHandler.twitterTrends.Length); //roll for trending topic to put on car <<<<<<< TEMPORARY?
+		int rollT = Random.Range (0, twitHandler.twitterTrends.Length);
 		thisTrend = twitHandler.twitterTrends[rollT];
 		tmp.GetComponentInChildren<TextMesh> ().text = twitHandler.twitterTrends [rollT].trendStr;
+		carTmp.thisTrend = thisTrend;
+		carTmp.tweetNum = Random.Range (0, thisTrend.trendBodies.Length);
 		carTmp.SetPathObject (pathToFollow);
 		carTmp.currentPoint = startNode;
 	}

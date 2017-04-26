@@ -17,6 +17,7 @@ public class CarAIPathing : MonoBehaviour {
 	public GameObject spawnPointPrefab;
 
 	public TwitterTrend thisTrend;
+	public int tweetNum; //which tweet within the trend does this car give to the player if they collide with it
 
 	void Awake () {
 		hashtag = GetComponentInChildren<TextMesh> ();
