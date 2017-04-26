@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ShowcaseScript : MonoBehaviour {
 	public GameObject myVehicle;
+	public TwitterTweetPlus tweetStuff; //the post on the timeline that this represents
 	ShowcaseCamera showcaseRef;
 	// Use this for initialization
 	void Awake () {
@@ -23,11 +24,24 @@ public class ShowcaseScript : MonoBehaviour {
 			newMats [0] = showcaseRef.carColorOptions [rollC];
 		}
 		carMesh.materials = newMats;
+		//tweetStuff.carMaterial = showcaseRef.carColorOptions [rollC];
+		//tweetStuff.carModel = showcaseRef.carModelOptions [rollM];
 		myVehicle.transform.Rotate (Vector3.forward * Random.Range(-180,180)); //give a pseudo random range of rotation to start
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		myVehicle.transform.Rotate (Vector3.forward * 5 * Time.deltaTime);
+	}
+
+	public void DisplayTweet() {
+		//UPDATE TWEET ON SHOWCASE DISPLAY
+		TwitterObject tweetVisual = GetComponentInChildren<TwitterObject>();
+		//tweetVisual.Initialize(tweetStuff.tweetUser,tweetStuff.tweetHandle,tweetStuff.tweetBody,tweetStuff.tweetRetweets,tweetStuff.tweetLikes
+		tweetVisual.usernameText.text = tweetStuff.tweetUser;
+		tweetVisual.handleText.text = tweetStuff.tweetHandle;
+		tweetVisual.messageText.text = tweetStuff.tweetBody;
+		tweetVisual.numRetweets.text = tweetStuff.tweetRetweets.ToString();
+		tweetVisual.numLikes.text = tweetStuff.tweetLikes.ToString();
 	}
 }

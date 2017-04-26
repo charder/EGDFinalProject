@@ -28,6 +28,8 @@ public class ShowcaseCamera : CarDataPassage {
 	int tweetOptionSelection; //iterator for tweetOptionCovers, and also determines which action is passed to the car upon creation
 	public GameObject[] tweetOptionCovers; //covers to highlight the current action the player will be performing if they start now
 
+	StoreTwitterData twitDatRef; //reference to the twitter data stuff for timeline visuals
+
 	// Use this for initialization
 	void Start () {
 		moveTime = moveSeconds;
@@ -35,6 +37,8 @@ public class ShowcaseCamera : CarDataPassage {
 		createTweetField = createTweetUI.GetComponentInChildren<InputField>();
 		createReplyingField = createResponseUI.GetComponentInChildren<InputField> ();
 		createTweetUI.SetActive (false);
+
+		twitDatRef = FindObjectOfType<StoreTwitterData> (); 
 
 		//Handle option selection (0 = Like, 1 = Retweet, 2 = Reply)
 		tweetOptionSelection = 0;
@@ -209,6 +213,16 @@ public class ShowcaseCamera : CarDataPassage {
 		showcaseCenter.myVehicle = (GameObject)Instantiate (carModelOptions [carModel], vehicleSpawn.position, vehicleSpawn.rotation);
 
 	}
+
+	public void SetTwitterTimelineData(StoreTwitterData twitterRef) {
+		twitDatRef = twitterRef;
+		for (int i = 0; i < showcasePoints.Length; i++) {
+			ShowcaseScript showcaseP = showcasePoints [i].GetComponent<ShowcaseScript> ();
+			showcaseP.tweetStuff = twitDatRef.twitterTimeline [i];
+			showcaseP.DisplayTweet ();
+		}
+	}
+
 
 	//IMPORTANT: The CarData class is defined in the script this script extends: CarDataPassage.cs
 	void PassDataToCar(CarData myCar) {
