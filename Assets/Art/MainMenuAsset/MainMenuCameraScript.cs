@@ -12,9 +12,12 @@ public class MainMenuCameraScript : MonoBehaviour {
         UpdatingAlpha = 0.0f;
         bFadeOut = false;
         TwitterPanel.SetActive(false);
+        PINPanel.SetActive(false);
+        bIsPinned = false;
 
         SetInputField();
         LoginButton.onClick.AddListener(LoginButtonClicked);
+        EnterPINButton.onClick.AddListener(TwitterHandler.EnterPIN);
         AccountInputField.onEndEdit.AddListener(AccountEdited);
         PasswordInputField.onEndEdit.AddListener(PasswordEdited);
     }
@@ -79,6 +82,8 @@ public class MainMenuCameraScript : MonoBehaviour {
         {
             CameraAnimator.SetBool("ShouldZoom", false);
             TwitterPanel.SetActive(false);
+            PINPanel.SetActive(false);
+            bIsPinned = false;
         }
 
         if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimation") && !CameraAnimator.GetBool("IsZoomed"))
@@ -108,9 +113,13 @@ public class MainMenuCameraScript : MonoBehaviour {
                 bEnteringNewScene = true;
                 bFadeOut = false;
             }
-            if (CameraAnimator.GetBool("IsZoomed"))
+            else if (CameraAnimator.GetBool("IsZoomed") && !bIsPinned)
             {
                 LoginButtonClicked();
+            }
+            else if (CameraAnimator.GetBool("IsZoomed") && bIsPinned)
+            {
+                TwitterHandler.EnterPIN();
             }
         }
     }
@@ -126,7 +135,11 @@ public class MainMenuCameraScript : MonoBehaviour {
 
     void LoginButtonClicked()
     {
+        TwitterPanel.SetActive(false);
+        PINPanel.SetActive(true);
 
+        bIsPinned = true;
+        Application.OpenURL(TwitterHandler.urlText.text);
     }
 
     void AccountEdited(string value)
@@ -139,20 +152,23 @@ public class MainMenuCameraScript : MonoBehaviour {
         Password = value;
     }
 
-
     public Text StartText;
     public Image FadeOutImage;
     public GameObject TwitterPanel;
+    public GameObject PINPanel;
 
     public Button LoginButton;
+    public Button EnterPINButton;
     public InputField AccountInputField;
     public InputField PasswordInputField;
+    public TwitterHandler TwitterHandler;
 
     public string Account { get; set; }
     public string Password { get; set; }
     private bool bEnteringNewScene;
     private bool bFadeOut;
     private float UpdatingAlpha;
+    private bool bIsPinned;
 
     private Animator CameraAnimator;
 }
