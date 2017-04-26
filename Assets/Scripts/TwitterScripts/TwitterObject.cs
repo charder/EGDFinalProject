@@ -12,6 +12,9 @@ public class TwitterObject : MonoBehaviour {
 	public Text numRetweets;
 	public Text numLikes;
 
+	public string profImageURL;
+
+
 	public Texture2D tempPic;
 
 	// Use this for initialization
@@ -40,5 +43,26 @@ public class TwitterObject : MonoBehaviour {
 		int likes = 422;
 		int retweets = 78;
 		Initialize (user, hand, message, tempPic, retweets, likes);
+	}
+
+	public void LoadProfileImage() {
+		StartCoroutine (GetImage (profImageURL));
+	}
+
+	IEnumerator GetImage(string url)
+	{
+		Texture2D tex;
+		WWW www = new WWW(url);
+
+		//Wait for the Download
+		yield return www;
+
+		if (!string.IsNullOrEmpty(www.error))
+			Debug.Log("WWW Error: " + www.error);
+		else
+		{
+			profImage.texture = www.texture;
+			Debug.Log ("Great Success!");
+		}
 	}
 }

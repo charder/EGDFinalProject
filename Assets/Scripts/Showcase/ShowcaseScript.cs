@@ -43,5 +43,12 @@ public class ShowcaseScript : MonoBehaviour {
 		tweetVisual.messageText.text = tweetStuff.tweetBody;
 		tweetVisual.numRetweets.text = tweetStuff.tweetRetweets.ToString();
 		tweetVisual.numLikes.text = tweetStuff.tweetLikes.ToString();
+
+		tweetVisual.profImageURL = tweetStuff.tweetPictureURL;
+
+		tweetVisual.LoadProfileImage ();
+
+
+
 	}
 }
