@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class TwitterHandler: MonoBehaviour {
 
     public GameObject displayText = null;
-    public GameObject urlText = null;
+    public Text urlText = null;
     public GameObject pinInput = null;
     public GameObject pinText = null;
 
