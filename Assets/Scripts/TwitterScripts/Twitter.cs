@@ -423,8 +423,8 @@ namespace Twitter
             //these might have to be sorted alphabetically, with 'q' at the end...
             parameters.Add("count", num.ToString());
             parameters.Add("exclude_replies", "true");
-//            parameters.Add("include_entities", "true");
-//            parameters.Add("trim_user", "false");
+            parameters.Add("include_entities", "true");
+            parameters.Add("trim_user", "false");
 
             string appendURL = "";
             for (int i = 0; i < parameters.Count; i++)

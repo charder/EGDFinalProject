@@ -300,6 +300,17 @@ public class StoreTwitterData : MonoBehaviour {
 			} else {
 				twitterTimeline [i].tweetLikes = 0;
 			}
+
+			if (tweets [i] ["entities"] != null) {
+				if (tweets [i] ["entities"] ["media"] != null) {
+					for (int j = 0; j < tweets [i] ["entities"] ["media"].Count; j++) {
+						Debug.Log(tweets[i]["entities"]["media"][j]["media_url_https"]);
+						//Application.OpenURL (tweets [i] ["entities"] ["media"] [i] ["media_url_https"]);
+					}
+
+				}	
+			}
+
 			//ADD IMAGE FOR TWEET IF APPLICABLE
 
 			//twitterTimeline[i].tweetImage = 
