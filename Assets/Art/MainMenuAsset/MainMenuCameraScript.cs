@@ -99,25 +99,29 @@ public class MainMenuCameraScript : MonoBehaviour {
             }
         }
 
-        if (!CameraAnimator.GetBool("IsZoomed") && !bEnteringNewScene)
+        if (Input.GetKeyDown(KeyCode.Return))
         {
-            if (Input.GetKeyDown(KeyCode.Return))
+            if (!CameraAnimator.GetBool("IsZoomed") && !bEnteringNewScene)
             {
                 UpdatingAlpha = 0.01f;
                 FadeOutImage.color = new Color(0.0f, 0.0f, 0.0f, UpdatingAlpha);
                 bEnteringNewScene = true;
                 bFadeOut = false;
             }
+            if (CameraAnimator.GetBool("IsZoomed"))
+            {
+                LoginButtonClicked();
+            }
         }
     }
 
     void SetInputField()
     {
-        Account = "EGDFinal";
-        Password = "Idontknowyet";
+        Account = "egdgroup@yahoo.com";
+        Password = "username123";
 
         AccountInputField.text = Account;
-        PasswordInputField.text = "********";
+        PasswordInputField.text = "***********";
     }
 
     void LoginButtonClicked()
