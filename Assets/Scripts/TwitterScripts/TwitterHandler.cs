@@ -14,8 +14,9 @@ public class TwitterHandler: MonoBehaviour {
     public GameObject pinText = null;
 
     public GameObject tweetTest = null;
+    public MainMenuCameraScript MainCamera;
 
-    public bool bIsReady = false;
+    public bool bIsReadyToStart = false;
 
     GameObject twitterHandler = null;
     static Twitter.RequestTokenResponse m_RequestTokenResponse;
@@ -60,12 +61,11 @@ public class TwitterHandler: MonoBehaviour {
 //            ClearUserInfo ();
 //        }
 
-        if (Input.GetKeyDown (KeyCode.Tab)) {
+        /*if (Input.GetKeyDown (KeyCode.Tab)) {
             Debug.Log ("HERE WE GO");
             string url = "https://pbs.twimg.com/profile_images/848712566834593793/uRee6rwf.jpg";
             StartCoroutine (GetImage (url));
-
-        }
+        }*/
 //
 //        if (Input.GetKeyDown (KeyCode.Tab)) {
 //            Debug.Log("Starting a tweet...");
@@ -181,12 +181,13 @@ public class TwitterHandler: MonoBehaviour {
     }
 
     void OnGetVerify(bool success, string results) {
-        print("OnGetVerify - " + (success ? "succedded." : "failed."));
+        print("OnGetVerify - " + (success ? "succeeded." : "failed."));
 
         if (success) {
             var r = JSON.Parse (results);
             displayText.GetComponent<Text>().text = "@" + r ["screen_name"] + " was verified!";
-            bIsReady = true;
+            bIsReadyToStart = true;
+            MainCamera.RequestButton.GetComponent<Text>().text = "Log Out";
         }
         else {
             displayText.GetComponent<Text>().text = "User could not be verified, please log out.";
@@ -388,6 +389,7 @@ public class TwitterHandler: MonoBehaviour {
         m_RequestTokenResponse = null;
 
         Debug.Log ("User info cleared");
+        bIsReadyToStart = false;
 
         handleLogin ();
     }
@@ -409,10 +411,15 @@ public class TwitterHandler: MonoBehaviour {
 
     void OnTinyURLCallback(bool success, string result, string longurl) {
         if (success) {
-            print("TinyURL - " + (success ? "succedded." : "failed."));
+            print("TinyURL - " + (success ? "succeeded." : "failed."));
             Debug.Log (longurl + " condensed to " + result);
             urlText.GetComponent<Text> ().text = result;
             pinInput.SetActive (true);
+
+            if (MainCamera.GetPinned())
+            {
+                Application.OpenURL(urlText.text);
+            }
         }
         else {
             urlText.GetComponent<Text> ().text = "";
