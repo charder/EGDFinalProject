@@ -170,7 +170,7 @@ public class StoreTwitterData : MonoBehaviour {
 			trendValues.Add (value);
 		}
 		twitterTrends = new TwitterTrend [3];
-		for (int i = 0; i < 3; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 1 TREND ATM
+		for (int i = 0; i < 3; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 3 TREND ATM
 			twitterTrends[i] = new TwitterTrend();
 			twitterTrends[i].trendStr = trendKeys [i];
 			twitterTrends[i].trendVolume = trendValues [i];
@@ -205,17 +205,24 @@ public class StoreTwitterData : MonoBehaviour {
 		var tweets = JSON.Parse(results);
 
 		string trendStr = tweets ["search_metadata"] ["query"].ToString ().Replace ("%23", "#");
+		trendStr = trendStr.Replace ("+", " ");
 		print ("Debug Trend String: " + trendStr);
 
 		TwitterTrend thisTrend = null;
+		bool found = false;
 		for (int i = 0; i < twitterTrends.Length; i++) {
 			if ("\"" + twitterTrends [i].trendStr + "\"" == trendStr) {
 				print ("CAN YOU HEAR ME!");
 				thisTrend = twitterTrends [i];
+				found = true;
 				break;
 			}
 		}
-		//Debug.Log("# of Tweets: " + tweets["statuses"].Count);
+		if (!found) {
+			print ("|" + trendStr + "|");
+		}
+
+		Debug.Log("# of Tweets: " + tweets["statuses"].Count);
 		for (int i=0; i< tweets["statuses"].Count; i++)
 		{
 			thisTrend.trendUsers [i] = (string)tweets ["statuses"] [i] ["user"] ["name"];

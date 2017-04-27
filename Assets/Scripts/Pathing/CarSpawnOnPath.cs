@@ -51,8 +51,11 @@ public class CarSpawnOnPath : MonoBehaviour {
 	}
 
 	void spawnCar() {
-		int roll = Random.Range (0, carPrefabs.Length);
-		int rollC = Random.Range (0, carMaterials.Length);
+		int rollT = Random.Range (0, twitHandler.twitterTrends.Length); //roll for trending topic to put on car <<<<<<< TEMPORARY?
+		TwitterTrend thisTrend = twitHandler.twitterTrends[rollT];
+		int roll = rollT % carPrefabs.Length;
+		int rollC = rollT % carMaterials.Length;
+
 		GameObject tmp = (GameObject)Instantiate (carPrefabs[roll],transform.position,Quaternion.identity);
 		CarAIPathing carTmp = tmp.GetComponent<CarAIPathing> ();
 		//tmp.GetComponentInChildren<MeshRenderer> ().materials [0] = carMaterials [rollC];
@@ -65,8 +68,8 @@ public class CarSpawnOnPath : MonoBehaviour {
 		}
 
 		tmp.GetComponentInChildren<MeshRenderer> ().materials = updatedMat;
-		int rollT = Random.Range (0, twitHandler.twitterTrends.Length); //roll for trending topic to put on car <<<<<<< TEMPORARY?
-		tmp.GetComponentInChildren<TextMesh>().text = twitHandler.twitterTrends[rollT].trendStr;
+
+		tmp.GetComponentInChildren<TextMesh>().text = thisTrend.trendStr;
 		carTmp.SetPathObject (pathToFollow);
 	}
 }
