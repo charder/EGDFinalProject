@@ -109,9 +109,10 @@ public class DrivingScriptTest: MonoBehaviour {
 		}
 
 		//rotation adjustment (keep upright whenever possible)
-		if (transform.rotation.eulerAngles.x < 250 || transform.rotation.eulerAngles.x > 290) {
+		if (transform.rotation.eulerAngles.x < 255 || transform.rotation.eulerAngles.x > 285) {
 			print (transform.rotation.eulerAngles.x);
-			transform.rotation = Quaternion.RotateTowards (transform.rotation, Quaternion.Euler (-90, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z), 50 * Time.deltaTime);
+			transform.rotation = Quaternion.RotateTowards (transform.rotation, Quaternion.Euler (-90, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z), 200 * Time.deltaTime);
+			myBody.AddForce (-transform.up * 100*Time.deltaTime, ForceMode.VelocityChange);
 		}
 
 		//boosting
