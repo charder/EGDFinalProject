@@ -310,10 +310,23 @@ public class StoreTwitterData : MonoBehaviour {
 
 			if (tweets [i] ["entities"] != null) {
 				if (tweets [i] ["entities"] ["media"] != null) {
-					for (int j = 0; j < tweets [i] ["entities"] ["media"].Count; j++) {
-						Debug.Log(tweets[i]["entities"]["media"][j]["media_url_https"]);
-						//Application.OpenURL (tweets [i] ["entities"] ["media"] [i] ["media_url_https"]);
-					}
+                    string largestImageURL = "";
+                    int size = 0;
+
+                    for (int j = 0; j < tweets [i] ["entities"] ["media"].Count; j++) {
+                        Debug.Log("HURURURHHR: " + tweets[i]["entities"]["media"][j]["media_url_https"]);
+                        int s = tweets [i] ["entities"] ["media"] [j] ["sizes"] ["large"] ["w"].AsInt * tweets [i] ["entities"] ["media"] [j] ["sizes"] ["large"] ["w"].AsInt;
+                        if (s > size) {
+                            size = s;
+                            largestImageURL = tweets [i] ["entities"] ["media"] [j] ["media_url_https"];
+                        }
+                    }
+
+                    twitterTimeline [i].tweetImage = largestImageURL;
+
+                    if (largestImageURL != "") {
+                        Debug.Log ("IMAGE: " + largestImageURL);
+                    }
 
 				}	
 			}

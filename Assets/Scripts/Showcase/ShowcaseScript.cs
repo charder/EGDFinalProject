@@ -6,7 +6,10 @@ public class ShowcaseScript : MonoBehaviour {
 	public GameObject myVehicle;
 	public TwitterTweetPlus tweetStuff; //the post on the timeline that this represents
 	ShowcaseCamera showcaseRef;
-	// Use this for initialization
+
+    public TwitterObject tweetCard = null;
+    public TwitterObject tweetCardPicture = null;
+    // Use this for initialization
 	void Awake () {
 		showcaseRef = FindObjectOfType<ShowcaseCamera> (); //get reference to showcaseCamera
 		int rollM = Random.Range(0,showcaseRef.carModelOptions.Length);
@@ -36,8 +39,21 @@ public class ShowcaseScript : MonoBehaviour {
 
 	public void DisplayTweet() {
 		//UPDATE TWEET ON SHOWCASE DISPLAY
-		TwitterObject tweetVisual = GetComponentInChildren<TwitterObject>();
+        TwitterObject tweetVisual = null; // GetComponentInChildren<TwitterObject>();
 		//tweetVisual.Initialize(tweetStuff.tweetUser,tweetStuff.tweetHandle,tweetStuff.tweetBody,tweetStuff.tweetRetweets,tweetStuff.tweetLikes
+
+        if (tweetStuff.tweetImage != null) {
+            tweetCardPicture.gameObject.SetActive (true);
+            tweetCard.gameObject.SetActive (false);
+            tweetVisual = tweetCardPicture;
+            tweetVisual.tweetPicURL = tweetStuff.tweetImage;
+            tweetVisual.LoadTweetImage ();
+        }
+        else {
+            tweetCard.gameObject.SetActive (true);
+            tweetCardPicture.gameObject.SetActive (false);
+            tweetVisual = tweetCard;
+        }
 		tweetVisual.usernameText.text = tweetStuff.tweetUser;
 		tweetVisual.handleText.text = tweetStuff.tweetHandle;
 		tweetVisual.messageText.text = tweetStuff.tweetBody;

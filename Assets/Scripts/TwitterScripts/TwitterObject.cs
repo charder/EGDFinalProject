@@ -15,6 +15,8 @@ public class TwitterObject : MonoBehaviour {
 
 	public string profImageURL;
 
+    public string tweetPicURL;
+
 
 	public Texture2D tempPic;
 
@@ -69,6 +71,10 @@ public class TwitterObject : MonoBehaviour {
 		StartCoroutine (GetImage (profImageURL));
 	}
 
+    public void LoadTweetImage() {
+        StartCoroutine (GetTweetImage (tweetPicURL));
+    }
+
 	IEnumerator GetImage(string url)
 	{
 		Texture2D tex;
@@ -84,4 +90,20 @@ public class TwitterObject : MonoBehaviour {
 			profImage.texture = www.texture;
 		}
 	}
+
+    IEnumerator GetTweetImage(string url)
+    {
+        Texture2D tex;
+        WWW www = new WWW(url);
+
+        //Wait for the Download
+        yield return www;
+
+        if (!string.IsNullOrEmpty(www.error))
+            Debug.Log("WWW Error: " + www.error);
+        else
+        {
+            messageImage.texture = www.texture;
+        }
+    }
 }
