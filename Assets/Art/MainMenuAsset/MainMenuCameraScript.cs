@@ -145,7 +145,7 @@ public class MainMenuCameraScript : MonoBehaviour {
         }
         else
         {
-            AccountInputField.text = "Please Click Login Below";
+            AccountInputField.text = @"Please Click ""Login"" Below";
             LoginText.text = "Login";
             PasswordInputField.text = "";
         }
@@ -158,13 +158,15 @@ public class MainMenuCameraScript : MonoBehaviour {
 
         bIsPinned = true;
 
-        if (TwitterHandler.urlText.text.Length > 1)
-        {
-            Application.OpenURL(TwitterHandler.urlText.text);
-        }
         if (TwitterHandler.bIsReadyToStart)
         {
             RequestAgainButtonClicked();
+            bIsPinned = true;
+        }
+
+        if (TwitterHandler.urlText.text.Length > 1)
+        {
+            Application.OpenURL(TwitterHandler.urlText.text);
         }
     }
 
@@ -176,7 +178,7 @@ public class MainMenuCameraScript : MonoBehaviour {
         if (!TwitterHandler.bIsReadyToStart)
         {
             PasswordInputField.text = "";
-            AccountInputField.text = "Please Click Login Below";
+            AccountInputField.text = @"Please Click ""Login"" Below";
 
             if (RequestText.text.Length < 10)
             {
