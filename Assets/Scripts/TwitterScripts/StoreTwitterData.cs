@@ -228,6 +228,7 @@ public class StoreTwitterData : MonoBehaviour {
 			thisTrend.trendUsers [i] = (string)tweets ["statuses"] [i] ["user"] ["name"];
 			thisTrend.trendHandles [i] = (string)tweets ["statuses"] [i] ["user"] ["screen_name"];
 			thisTrend.trendPictureURL [i] = (string)tweets ["statuses"] [i] ["user"] ["profile_image_url"];
+            //thisTrend.LoadProfPic (i);
 			thisTrend.trendBodies[i] = (string)tweets["statuses"][i]["text"];
 			if (tweets ["statuses"] [i] ["retweet_count"].AsInt != null) {
 				thisTrend.trendRetweets [i] = tweets ["statuses"] [i] ["retweet_count"].AsInt;
@@ -239,6 +240,8 @@ public class StoreTwitterData : MonoBehaviour {
 			} else {
 				thisTrend.trendLikes [i] = 0;
 			}
+
+            StartCoroutine(LoadImage(thisTrend, i));
 		}
 
 		/*
@@ -253,6 +256,23 @@ public class StoreTwitterData : MonoBehaviour {
 		// Stauses is a list of tweets, do stuff with it here
 
 	}
+
+    IEnumerator LoadImage(TwitterTrend t, int i) {
+        Texture2D tex;
+        WWW www = new WWW(t.trendPictureURL[i]);
+
+        //Wait for the Download
+        yield return www;
+
+        if (!string.IsNullOrEmpty(www.error))
+            Debug.Log("WWW Error: " + www.error);
+        else
+        {
+            t.trendProfPics[i] = www.texture;
+        }
+    }
+
+
 
 	/// //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -314,7 +334,6 @@ public class StoreTwitterData : MonoBehaviour {
                     int size = 0;
 
                     for (int j = 0; j < tweets [i] ["entities"] ["media"].Count; j++) {
-                        Debug.Log("HURURURHHR: " + tweets[i]["entities"]["media"][j]["media_url_https"]);
                         int s = tweets [i] ["entities"] ["media"] [j] ["sizes"] ["large"] ["w"].AsInt * tweets [i] ["entities"] ["media"] [j] ["sizes"] ["large"] ["w"].AsInt;
                         if (s > size) {
                             size = s;
@@ -323,10 +342,6 @@ public class StoreTwitterData : MonoBehaviour {
                     }
 
                     twitterTimeline [i].tweetImage = largestImageURL;
-
-                    if (largestImageURL != "") {
-                        Debug.Log ("IMAGE: " + largestImageURL);
-                    }
 
 				}	
 			}

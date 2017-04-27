@@ -232,6 +232,8 @@ public class DrivingScriptTest: MonoBehaviour {
 			cornerTweet.messageText.text = currentTrend.trendBodies [tweetNum];
 			cornerTweet.numLikes.text = currentTrend.trendLikes [tweetNum].ToString();
 			cornerTweet.numRetweets.text = currentTrend.trendRetweets [tweetNum].ToString ();
+            cornerTweet.profImageURL = currentTrend.trendPictureURL [tweetNum];
+            cornerTweet.profImage.texture = currentTrend.trendProfPics [tweetNum];
 		}
 	}
 }

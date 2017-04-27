@@ -91,6 +91,10 @@ public class TwitterObject : MonoBehaviour {
 		}
 	}
 
+    public void SetDefaultProfImage() {
+        profImage.texture = tempPic;
+    }
+
     IEnumerator GetTweetImage(string url)
     {
         Texture2D tex;

@@ -18,6 +18,7 @@ public class TwitterTrend : MonoBehaviour {
 	public string[] trendBodies;
 	public int[] trendLikes;
 	public int[] trendRetweets;
+    public Texture2D[] trendProfPics;
 
 	void Start () {
 		
@@ -43,5 +44,27 @@ public class TwitterTrend : MonoBehaviour {
 		trendBodies = new string[50];
 		trendLikes = new int[50];
 		trendRetweets = new int[50];
+        trendProfPics = new Texture2D[50];
 	}
+
+    public void LoadProfPic(int index) {
+        StartCoroutine( GetImage(index));
+    }
+
+    IEnumerator GetImage(int index)
+    {
+        Texture2D tex;
+        WWW www = new WWW(trendPictureURL[index]);
+
+        //Wait for the Download
+        yield return www;
+
+        if (!string.IsNullOrEmpty(www.error))
+            Debug.Log("WWW Error: " + www.error);
+        else
+        {
+            Debug.Log ("GREATEST SUCCESS");
+            trendProfPics[index] = www.texture;
+        }
+    }
 }
