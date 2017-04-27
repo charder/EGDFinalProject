@@ -223,6 +223,76 @@ public class ShowcaseCamera : CarDataPassage {
 		}
 	}
 
+	public void TweetOptionCreate() {
+		if (ManageMovement ()) {
+			if (!creatingTweet) {
+				creatingTweet = true;
+				createTweetUI.SetActive (true);
+				createResponseUI.SetActive (false);
+			}
+		}
+	}
+
+	public void TweetOptionSelection(int num) {
+		if (ManageMovement ()) {
+			if (creatingTweet) {
+				creatingTweet = false;
+				createTweetUI.SetActive (false);
+				createResponseUI.SetActive (true);
+			}
+			tweetOptionCovers [tweetOptionSelection].SetActive (true);
+			tweetOptionSelection = num;
+			tweetOptionCovers [tweetOptionSelection].SetActive (false);
+		}
+	}
+
+	public void ChangeCarColor(int rightleft) {
+		if (rightleft == 0) {
+			carColor++;
+			if (carColor >= carColorOptions.Length) {
+				carColor = 0;
+			}
+		} else {
+			carColor--;
+			if (carColor < 0) {
+				carColor = carColorOptions.Length - 1;
+			}
+		}
+	}
+
+	public void ChangeCarModel(int rightleft) {
+		if (rightleft == 0) {
+			carModel++;
+			if (carModel >= carModelOptions.Length) {
+				carModel = 0;
+			}
+			changeCar ();
+		} else {
+			carModel--;
+			if (carModel < 0) {
+				carModel = carModelOptions.Length - 1;
+			}
+			changeCar ();
+		}
+	}
+
+	public void MoveOnTimeline(int leftright) {
+		if (ManageMovement ()) {
+			if (leftright == 0) {
+				currentShowcase++;
+				if (currentShowcase >= showcasePoints.Length) {
+					currentShowcase = 0;
+				}
+			} else {
+				currentShowcase--;
+				if (currentShowcase < 0) {
+					currentShowcase = showcasePoints.Length - 1;
+				}
+			}
+		}
+	}
+
+
 
 	//IMPORTANT: The CarData class is defined in the script this script extends: CarDataPassage.cs
 	void PassDataToCar(CarData myCar) {
