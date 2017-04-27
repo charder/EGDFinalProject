@@ -18,12 +18,7 @@ public class MainMenuCameraScript : MonoBehaviour {
 
         SetInputField();
         LoginButton.onClick.AddListener(LoginButtonClicked);
-        EnterPINButton.onClick.AddListener(EnterPINButtonClicked);
         RequestButton.onClick.AddListener(RequestAgainButtonClicked);
-        AccountInputField.onEndEdit.AddListener(AccountEdited);
-        PasswordInputField.onEndEdit.AddListener(PasswordEdited);
-        AccountInputField.onValueChanged.AddListener(OnAccountInfoChanging);
-        PasswordInputField.onValueChanged.AddListener(OnAccountInfoChanging);
     }
 	
 	// Update is called once per frame
@@ -135,18 +130,25 @@ public class MainMenuCameraScript : MonoBehaviour {
             }
             else if (CameraAnimator.GetBool("IsZoomed") && bIsPinned)
             {
-                EnterPINButtonClicked();
+                TwitterHandler.EnterPIN();
             }
         }
     }
 
     void SetInputField()
     {
-        Account = "egdgroup@yahoo.com";
-        Password = "username123";
-
-        AccountInputField.text = Account;
-        PasswordInputField.text = "***********";
+        AccountInputField.text = PlayerPrefs.GetString(TwitterHandler.PLAYER_PREFS_TWITTER_USER_SCREEN_NAME);
+        if (AccountInputField.text.Length > 1)
+        {
+            LoginText.text = "Switch";
+            PasswordInputField.text = "********";
+        }
+        else
+        {
+            AccountInputField.text = "Please Click Login Below";
+            LoginText.text = "Login";
+            PasswordInputField.text = "";
+        }
     }
 
     void LoginButtonClicked()
@@ -160,49 +162,28 @@ public class MainMenuCameraScript : MonoBehaviour {
         {
             Application.OpenURL(TwitterHandler.urlText.text);
         }
+        if (TwitterHandler.bIsReadyToStart)
+        {
+            RequestAgainButtonClicked();
+        }
     }
 
     void RequestAgainButtonClicked()
     {
         bIsPinned = true;
         TwitterHandler.ClearUserInfo();
-        
-        if(TwitterHandler.bIsReadyToStart)
-        {
-            bIsPinned = false;
-            RequestButton.GetComponent<Text>().text = "Request Again";
-        }
-    }
 
-    void EnterPINButtonClicked()
-    {
-        if (TwitterHandler.urlText.text.Length > 1)
+        if (!TwitterHandler.bIsReadyToStart)
         {
-            TwitterHandler.EnterPIN();
-        }
-    }
+            PasswordInputField.text = "";
+            AccountInputField.text = "Please Click Login Below";
 
-    void AccountEdited(string value)
-    {
-        if (value != Account)
-        {
-            TwitterHandler.ClearUserInfo();
-            Account = value;
+            if (RequestText.text.Length < 10)
+            {
+                bIsPinned = false;
+                RequestText.text = "Request Again";
+            }
         }
-    }
-
-    void PasswordEdited(string value)
-    {
-        if (value != Password)
-        {
-            TwitterHandler.ClearUserInfo();
-            Password = value;
-        }
-    }
-
-    void OnAccountInfoChanging(string value)
-    {
-        TwitterHandler.ClearUserInfo();
     }
 
     public bool GetPinned()
@@ -216,15 +197,14 @@ public class MainMenuCameraScript : MonoBehaviour {
     public GameObject PINPanel;
 
     public Button LoginButton;
-    public Button EnterPINButton;
+    public Text LoginText;
     public Button RequestButton;
+    public Text RequestText;
     public InputField AccountInputField;
     public InputField PasswordInputField;
     public InputField PINInputField;
     public TwitterHandler TwitterHandler;
-
-    public string Account { get; set; }
-    public string Password { get; set; }
+    
     private bool bEnteringNewScene;
     private bool bFadeOut;
     private float UpdatingAlpha;

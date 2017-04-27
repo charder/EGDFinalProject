@@ -12,6 +12,7 @@ public class TwitterHandler: MonoBehaviour {
     public Text urlText = null;
     public GameObject pinInput = null;
     public GameObject pinText = null;
+    public GameObject EnterPINButton = null;
 
     public GameObject tweetTest = null;
     public MainMenuCameraScript MainCamera;
@@ -27,10 +28,10 @@ public class TwitterHandler: MonoBehaviour {
     // You need to save access token and secret for later use.
     // You can keep using them whenever you need to access the user's Twitter account. 
     // They will be always valid until the user revokes the access to your application.
-    const string PLAYER_PREFS_TWITTER_USER_ID           = "TwitterUserID";
-    const string PLAYER_PREFS_TWITTER_USER_SCREEN_NAME  = "TwitterUserScreenName";
-    const string PLAYER_PREFS_TWITTER_USER_TOKEN        = "TwitterUserToken";
-    const string PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET = "TwitterUserTokenSecret";
+    public const string PLAYER_PREFS_TWITTER_USER_ID           = "TwitterUserID";
+    public const string PLAYER_PREFS_TWITTER_USER_SCREEN_NAME  = "TwitterUserScreenName";
+    public const string PLAYER_PREFS_TWITTER_USER_TOKEN        = "TwitterUserToken";
+    public const string PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET = "TwitterUserTokenSecret";
 
     private const string CONSUMER_KEY = "bxF6XgC7nXVhEnGJPlLUkoA8c";
     private const string CONSUMER_SECRET = "jfM8RmslKt1Iq7MxZf7xuJJiuoz3LxkLltN6uPs77aUOWCYNnH";
@@ -49,8 +50,9 @@ public class TwitterHandler: MonoBehaviour {
 
         urlText.GetComponent<Text> ().text = "";
         pinInput.SetActive (false);
+        EnterPINButton.SetActive(false);
 
-        if (!(displayText == null || urlText == null || pinInput == null || pinText == null)) {
+        if (!(displayText == null || urlText == null || pinInput == null || pinText == null || EnterPINButton == null)) {
             handleLogin ();
         }
 	}
@@ -118,6 +120,7 @@ public class TwitterHandler: MonoBehaviour {
         else {
             // have app stuff and we are theoretically logged in, check
             displayText.GetComponent<Text>().text = "verifying...";
+            EnterPINButton.SetActive(false);
             StartGetVerify();
         }
     }
@@ -141,6 +144,7 @@ public class TwitterHandler: MonoBehaviour {
             print("OnRequestTokenCallback - failed.");
             urlText.GetComponent<Text> ().text = "";
             pinInput.SetActive (false);
+            EnterPINButton.SetActive(false);
         }
     }
 
@@ -161,6 +165,9 @@ public class TwitterHandler: MonoBehaviour {
             PlayerPrefs.SetString(PLAYER_PREFS_TWITTER_USER_SCREEN_NAME, response.ScreenName);
             PlayerPrefs.SetString(PLAYER_PREFS_TWITTER_USER_TOKEN, response.Token);
             PlayerPrefs.SetString(PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET, response.TokenSecret);
+
+            MainCamera.AccountInputField.text = PlayerPrefs.GetString(PLAYER_PREFS_TWITTER_USER_SCREEN_NAME);
+            MainCamera.PasswordInputField.text = "********";
         }
         else
         {
@@ -187,7 +194,9 @@ public class TwitterHandler: MonoBehaviour {
             var r = JSON.Parse (results);
             displayText.GetComponent<Text>().text = "@" + r ["screen_name"] + " was verified!";
             bIsReadyToStart = true;
-            MainCamera.RequestButton.GetComponent<Text>().text = "Log Out";
+            EnterPINButton.SetActive(false);
+            MainCamera.RequestText.text = "Log Out";
+            MainCamera.LoginText.text = "Switch";
         }
         else {
             displayText.GetComponent<Text>().text = "User could not be verified, please log out.";
@@ -391,6 +400,8 @@ public class TwitterHandler: MonoBehaviour {
         Debug.Log ("User info cleared");
         bIsReadyToStart = false;
 
+        MainCamera.LoginText.text = "Login";
+
         handleLogin ();
     }
 
@@ -415,8 +426,9 @@ public class TwitterHandler: MonoBehaviour {
             Debug.Log (longurl + " condensed to " + result);
             urlText.GetComponent<Text> ().text = result;
             pinInput.SetActive (true);
+            EnterPINButton.SetActive(true);
 
-            if (MainCamera.GetPinned())
+            if (MainCamera.GetPinned() && MainCamera.RequestText.text.Length > 8 && MainCamera.GetPinned())
             {
                 Application.OpenURL(urlText.text);
             }
@@ -424,7 +436,7 @@ public class TwitterHandler: MonoBehaviour {
         else {
             urlText.GetComponent<Text> ().text = "";
             pinInput.SetActive (false);
+            EnterPINButton.SetActive(false);
         }
     }
-
 }
