@@ -195,6 +195,10 @@ public class DrivingScriptTest: MonoBehaviour {
 		if (other.gameObject.tag == "Ground") {
 			grounded = true;
 		}
+		if (other.gameObject.tag == "Portal") {
+			print ("PORTAL");
+			myBody.AddForce (Vector3.right * 100, ForceMode.VelocityChange);
+		}
 	}
 
 	void OnTriggerExit(Collider other) {
