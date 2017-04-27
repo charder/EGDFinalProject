@@ -18,11 +18,17 @@ public class MainMenuCameraScript : MonoBehaviour {
 
         SetInputField();
         LoginButton.onClick.AddListener(LoginButtonClicked);
+        LogOutButton.onClick.AddListener(LogOutButtonClicked);
         RequestButton.onClick.AddListener(RequestAgainButtonClicked);
     }
 	
 	// Update is called once per frame
 	void Update () {
+        if (TwitterHandler.bIsReadyToStart && StartText.text.Length < 25 && !CameraAnimator.GetBool("ShouldZoom"))
+        {
+            StartText.text = EnterText;
+        }
+
         // The fade in fade out for "press start"
         if (UpdatingAlpha < 1.0f && !bFadeOut)
         {
@@ -98,25 +104,6 @@ public class MainMenuCameraScript : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            if (bIsPinned)
-            {
-                PINInputField.ActivateInputField();
-            }
-
-            if (AccountInputField.isFocused)
-            {
-                AccountInputField.DeactivateInputField();
-                PasswordInputField.ActivateInputField();
-            }
-            else
-            {
-                AccountInputField.ActivateInputField();
-                PasswordInputField.DeactivateInputField();
-            }
-        }
-
         if (Input.GetKeyDown(KeyCode.Return))
         {
             if (!TwitterHandler.bIsReadyToStart)
@@ -148,13 +135,13 @@ public class MainMenuCameraScript : MonoBehaviour {
         if (AccountInputField.text.Length > 1)
         {
             LoginText.text = "Switch";
-            PasswordInputField.text = "********";
+            LogOutButtonObject.SetActive(true);
         }
         else
         {
-            AccountInputField.text = @"Please Click ""Login"" Below";
-            LoginText.text = "Login";
-            PasswordInputField.text = "";
+            AccountInputField.text = "No User Signed In";
+            LoginText.text = "Sign In";
+            LogOutButtonObject.SetActive(false);
         }
     }
 
@@ -177,15 +164,26 @@ public class MainMenuCameraScript : MonoBehaviour {
         }
     }
 
+    void LogOutButtonClicked()
+    {
+        TwitterHandler.ClearUserInfo();
+        LogOutButtonObject.SetActive(false);
+
+        AccountInputField.text = "No User Signed In";
+
+        RequestText.text = "Request Again";
+    }
+
     void RequestAgainButtonClicked()
     {
         bIsPinned = true;
         TwitterHandler.ClearUserInfo();
 
+        LogOutButtonObject.SetActive(false);
+
         if (!TwitterHandler.bIsReadyToStart)
         {
-            PasswordInputField.text = "";
-            AccountInputField.text = @"Please Click ""Login"" Below";
+            AccountInputField.text = "No User Signed In";
 
             if (RequestText.text.Length < 10)
             {
@@ -204,13 +202,14 @@ public class MainMenuCameraScript : MonoBehaviour {
     public Image FadeOutImage;
     public GameObject TwitterPanel;
     public GameObject PINPanel;
+    public GameObject LogOutButtonObject;
 
     public Button LoginButton;
     public Text LoginText;
+    public Button LogOutButton;
     public Button RequestButton;
     public Text RequestText;
     public InputField AccountInputField;
-    public InputField PasswordInputField;
     public InputField PINInputField;
     public TwitterHandler TwitterHandler;
     
