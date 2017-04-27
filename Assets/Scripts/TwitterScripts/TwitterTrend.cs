@@ -7,7 +7,6 @@ public class TwitterTrend : MonoBehaviour {
 	/// Class used as data storage for trending topics
 	/// </summary>
 
-
 	public string trendStr; //trend string (text above car)
 	public int trendVolume; //volume of trend (used for spawn frequency)
 
@@ -20,8 +19,8 @@ public class TwitterTrend : MonoBehaviour {
 	public int[] trendRetweets;
     public Texture2D[] trendProfPics;
 
-	void Start () {
-		
+	void Awake () {
+		DontDestroyOnLoad (this.gameObject);
 	}
 	
 	// Update is called once per frame

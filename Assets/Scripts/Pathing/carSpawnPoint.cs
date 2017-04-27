@@ -12,7 +12,7 @@ public class carSpawnPoint : MonoBehaviour {
 	StoreTwitterData twitHandler; //reference to the twitter handler script
 	public TwitterTrend thisTrend;
 
-	float delaySpawn = 2f;
+	public float delaySpawn = 2f;
 	// Use this for initialization
 	void Awake () {
 		//twitHandler = FindObjectOfType<StoreTwitterData> ();
@@ -28,13 +28,14 @@ public class carSpawnPoint : MonoBehaviour {
 		if (delaySpawn > 0) {
 			delaySpawn -= Time.deltaTime;
 			if (delaySpawn <= 0) {
-				twitHandler = FindObjectOfType<StoreTwitterData> ();
 				spawnCar ();
 			}
 		}
 	}
 
 	void spawnCar() {
+		print ("HOW MANY STORETWITTERDATAS " + FindObjectsOfType<StoreTwitterData> ().Length);
+		twitHandler = GameObject.Find ("TwitterHandler").GetComponent<StoreTwitterData> ();
 		int rollT = Random.Range (0, twitHandler.twitterTrends.Length); //roll for trending topic to put on car <<<<<<< TEMPORARY?
 		TwitterTrend thisTrend = twitHandler.twitterTrends[rollT];
 		int roll = rollT % carPrefabs.Length;

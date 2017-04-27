@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TwitterTweetPlus : MonoBehaviour {
+public class TwitterTweetPlus {
 	/// <summary>
 	/// Class used as data storage for timeline
 	/// </summary>
@@ -40,12 +40,7 @@ public class TwitterTweetPlus : MonoBehaviour {
 	}
 
 	public void PrintShit() {
-		print ("Tweet User: " + tweetUser);
-		print ("Tweet Handle" + tweetHandle);
-		print ("Tweet Picture URL" + tweetPictureURL);
-		print ("Tweet Body" + tweetBody);
-		print ("Tweet Likes" + tweetLikes);
-		print ("Tweet Retweets" + tweetRetweets);
+		
 	}
 
 	public TwitterTweetPlus() {

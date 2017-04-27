@@ -169,9 +169,11 @@ public class StoreTwitterData : MonoBehaviour {
 		foreach (var value in trends.Values) {
 			trendValues.Add (value);
 		}
-		twitterTrends = new TwitterTrend [3];
+		twitterTrends = new  TwitterTrend[3];
 		for (int i = 0; i < 3; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 3 TREND ATM
-			twitterTrends[i] = new TwitterTrend();
+			GameObject holdMe = new GameObject();
+			TwitterTrend trendMe = holdMe.AddComponent<TwitterTrend> ();
+			twitterTrends [i] = trendMe;
 			twitterTrends[i].trendStr = trendKeys [i];
 			twitterTrends[i].trendVolume = trendValues [i];
 			StartGetHashtag (trendKeys [i], 50);

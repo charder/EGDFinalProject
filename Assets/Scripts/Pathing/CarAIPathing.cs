@@ -46,13 +46,14 @@ public class CarAIPathing : MonoBehaviour {
 		hashtag.transform.LookAt(playerCam.position);
 		Vector3 hRot = hashtag.transform.rotation.eulerAngles;
 		//hashtag.transform.rotation = Quaternion.Euler (hRot.x, 0, hRot.z);
+
 		//Press P to capture a paused version of the cars
-		if (Input.GetKeyDown(KeyCode.P)) {
-			GameObject carPoint = (GameObject)Instantiate (spawnPointPrefab, transform.position, transform.rotation);
-			carSpawnPoint carPointComp = carPoint.GetComponent<carSpawnPoint> ();
-			carPointComp.startNode = currentPoint;
-			carPointComp.pathToFollow = pathObject;
-		}
+//		if (Input.GetKeyDown(KeyCode.P)) {
+//			GameObject carPoint = (GameObject)Instantiate (spawnPointPrefab, transform.position, transform.rotation);
+//			carSpawnPoint carPointComp = carPoint.GetComponent<carSpawnPoint> ();
+//			carPointComp.startNode = currentPoint;
+//			carPointComp.pathToFollow = pathObject;
+//		}
 	}
 
 	public void SetPathObject(GameObject obj) {
