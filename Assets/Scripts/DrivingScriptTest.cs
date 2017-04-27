@@ -49,8 +49,14 @@ public class DrivingScriptTest: MonoBehaviour {
 	public TwitterObject cornerTweet; //tweet Object that shows up in the top-right corner
 	int tweetNum = 0;
 
+	public TwitterTweetPlus carData; //data carried with this car to be delivered and posted on Twitter
+
 	bool grounded = false; //whether or not the car is on the ground
 	// Use this for initialization
+
+	void Awake() {
+		DontDestroyOnLoad (this.gameObject);
+	}
 	void Start () {
 		myBody = this.GetComponent<Rigidbody> ();
 		moveDir = 1;

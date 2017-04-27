@@ -15,7 +15,7 @@ public class carSpawnPoint : MonoBehaviour {
 	float delaySpawn = 2f;
 	// Use this for initialization
 	void Awake () {
-		twitHandler = FindObjectOfType<StoreTwitterData> ();
+		//twitHandler = FindObjectOfType<StoreTwitterData> ();
 		//spawnCar ();
 	}
 
@@ -28,6 +28,7 @@ public class carSpawnPoint : MonoBehaviour {
 		if (delaySpawn > 0) {
 			delaySpawn -= Time.deltaTime;
 			if (delaySpawn <= 0) {
+				twitHandler = FindObjectOfType<StoreTwitterData> ();
 				spawnCar ();
 			}
 		}

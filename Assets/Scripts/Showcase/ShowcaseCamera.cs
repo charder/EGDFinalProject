@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class ShowcaseCamera : CarDataPassage {
 	public ShowcaseScript[] showcasePoints;
@@ -29,6 +30,7 @@ public class ShowcaseCamera : CarDataPassage {
 	public GameObject[] tweetOptionCovers; //covers to highlight the current action the player will be performing if they start now
 
 	StoreTwitterData twitDatRef; //reference to the twitter data stuff for timeline visuals
+	public GameObject[] playerCars; //prefabs for the player cars 
 
 	// Use this for initialization
 	void Start () {
@@ -294,8 +296,47 @@ public class ShowcaseCamera : CarDataPassage {
 
 
 
-	//IMPORTANT: The CarData class is defined in the script this script extends: CarDataPassage.cs
-	void PassDataToCar(CarData myCar) {
-
+	//Which action is used when the game is started
+	public void PassDataToCar(int option) {
+		TwitterTweetPlus relevantInfo = new TwitterTweetPlus ();
+		relevantInfo.postType = option;
+		switch (option) {
+		//Tweet
+		case 0:
+			print ("ARE WE GETTING HERE?");
+			relevantInfo.carMaterial = carColorOptions [carColor];
+			GameObject playerCarSpawn = (GameObject)Instantiate (playerCars [carModel]);
+			DrivingScriptTest carDrive = playerCarSpawn.GetComponent<DrivingScriptTest> ();
+			MeshRenderer carMesh = playerCarSpawn.GetComponentInChildren<MeshRenderer> ();
+			//change car color
+			Material[] updatedMat = carMesh.materials;
+			if (carModel == 3) {
+				updatedMat [1] = carColorOptions [carColor];
+			} else {
+				updatedMat [0] = carColorOptions [carColor];
+			}
+			carMesh.materials = updatedMat;
+			//ID STUFF
+			DontDestroyOnLoad(playerCarSpawn);
+			SceneManager.LoadScene("ModifiedCity");
+			break;
+		//Retweet
+		case 1:
+			switch (tweetOptionSelection) {
+			//Like
+			case 0:
+				relevantInfo.postType = 1;
+				break;
+			//Retweet
+			case 1:
+				relevantInfo.postType = 2;
+				break;
+			//Reply
+			case 2:
+				relevantInfo.postType = 3;
+				break;
+			}
+			break;
+		}
 	}
 }

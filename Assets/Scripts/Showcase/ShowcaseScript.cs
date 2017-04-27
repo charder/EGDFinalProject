@@ -9,22 +9,24 @@ public class ShowcaseScript : MonoBehaviour {
 
     public TwitterObject tweetCard = null;
     public TwitterObject tweetCardPicture = null;
+	public int carColorNum;
+	public int carModelNum;
     // Use this for initialization
 	void Awake () {
 		showcaseRef = FindObjectOfType<ShowcaseCamera> (); //get reference to showcaseCamera
-		int rollM = Random.Range(0,showcaseRef.carModelOptions.Length);
+		carModelNum = Random.Range(0,showcaseRef.carModelOptions.Length);
 		Transform vehicleSpawn = myVehicle.transform;
 		Destroy (myVehicle);
-		myVehicle = (GameObject)Instantiate (showcaseRef.carModelOptions [rollM], vehicleSpawn.position, vehicleSpawn.rotation);
+		myVehicle = (GameObject)Instantiate (showcaseRef.carModelOptions [carModelNum], vehicleSpawn.position, vehicleSpawn.rotation);
 
-		int rollC = Random.Range(0,showcaseRef.carColorOptions.Length);
+		carColorNum = Random.Range(0,showcaseRef.carColorOptions.Length);
 		//Color and Model update on the car
 		MeshRenderer carMesh = myVehicle.GetComponent<MeshRenderer>();
 		Material[] newMats = carMesh.materials;
 		if (newMats [0].name == "CarBumper (Instance)") {
-			newMats [1] = showcaseRef.carColorOptions [rollC];
+			newMats [1] = showcaseRef.carColorOptions [carColorNum];
 		} else {
-			newMats [0] = showcaseRef.carColorOptions [rollC];
+			newMats [0] = showcaseRef.carColorOptions [carColorNum];
 		}
 		carMesh.materials = newMats;
 		//tweetStuff.carMaterial = showcaseRef.carColorOptions [rollC];

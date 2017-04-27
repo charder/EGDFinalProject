@@ -20,6 +20,15 @@ public class TwitterTweetPlus : MonoBehaviour {
 
 	public Material carMaterial = null;
 	public GameObject carModel = null;
+	public int postType; //which type of twitter interaction this is
+//	0 = Like
+//	1 = Retweet
+//	2 = Reply
+//	3 = Tweet
+
+	//REPLYING
+	public string replyID = null; //id of the user that you can reply to
+
 
 	void Start () {
 		
