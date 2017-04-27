@@ -14,7 +14,7 @@ public class MainMenuCameraScript : MonoBehaviour {
         TwitterPanel.SetActive(false);
         PINPanel.SetActive(false);
         bIsPinned = false;
-        StartText.text = EnterText;
+        StartText.text = @"Press ""Enter"" to Start";
 
         SetInputField();
         LoginButton.onClick.AddListener(LoginButtonClicked);
@@ -87,7 +87,14 @@ public class MainMenuCameraScript : MonoBehaviour {
             {
                 CameraAnimator.SetBool("IsZoomed", false);
                 TwitterPanel.SetActive(false);
-                StartText.text = EnterText;
+                if (TwitterHandler.bIsReadyToStart)
+                {
+                    StartText.text = EnterText;
+                }
+                else
+                {
+                    StartText.text = @"Press ""Enter"" to Start";
+                }
             }
         }
 
