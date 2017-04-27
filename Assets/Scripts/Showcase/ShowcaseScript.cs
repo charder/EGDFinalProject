@@ -57,7 +57,7 @@ public class ShowcaseScript : MonoBehaviour {
             tweetVisual = tweetCard;
         }
 		tweetVisual.usernameText.text = tweetStuff.tweetUser;
-		tweetVisual.handleText.text = tweetStuff.tweetHandle;
+		tweetVisual.handleText.text = "@" + tweetStuff.tweetHandle;
 		tweetVisual.messageText.text = tweetStuff.tweetBody;
 		tweetVisual.numRetweets.text = tweetStuff.tweetRetweets.ToString();
 		tweetVisual.numLikes.text = tweetStuff.tweetLikes.ToString();

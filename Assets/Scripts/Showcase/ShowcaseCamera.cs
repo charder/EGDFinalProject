@@ -32,6 +32,9 @@ public class ShowcaseCamera : CarDataPassage {
 	StoreTwitterData twitDatRef; //reference to the twitter data stuff for timeline visuals
 	public GameObject[] playerCars; //prefabs for the player cars 
 
+
+    public GameObject replyText = null;
+
 	// Use this for initialization
 	void Start () {
 		moveTime = moveSeconds;
@@ -55,6 +58,9 @@ public class ShowcaseCamera : CarDataPassage {
 			showcasePoint = showcaseCenter.transform.position;
 		} else {
 			showcasePoint = showcasePoints[currentShowcase].transform.position;
+            if (!replyText.GetComponent<InputField> ().text.Contains ("@" + showcasePoints [currentShowcase].tweetStuff.tweetHandle + " ")) {
+                replyText.GetComponent<InputField>().text = "@" + showcasePoints [currentShowcase].tweetStuff.tweetHandle + " ";
+            }
 		}
 		currentRot = transform.rotation;
 		transform.LookAt (showcasePoint);
