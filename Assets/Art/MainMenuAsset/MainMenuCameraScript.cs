@@ -20,6 +20,10 @@ public class MainMenuCameraScript : MonoBehaviour {
         EnterPINButton.onClick.AddListener(EnterPINButtonClicked);
         AccountInputField.onEndEdit.AddListener(AccountEdited);
         PasswordInputField.onEndEdit.AddListener(PasswordEdited);
+        AccountInputField.onValueChanged.AddListener(OnAccountInfoChanging);
+        PasswordInputField.onValueChanged.AddListener(OnAccountInfoChanging);
+
+        EnterText.Replace("\\n", "\n");
     }
 	
 	// Update is called once per frame
@@ -48,7 +52,7 @@ public class MainMenuCameraScript : MonoBehaviour {
         if(bEnteringNewScene)
         {
             FadeOutImage.color = new Color(0.0f, 0.0f, 0.0f, UpdatingAlpha);
-            if (UpdatingAlpha >= 0.9)
+            if (UpdatingAlpha >= 0.99)
             {
                 // Enter new Scene
                 SceneManager.LoadScene("Scenes/ShowcaseScene");
@@ -56,26 +60,13 @@ public class MainMenuCameraScript : MonoBehaviour {
         }
 
         // Press Start text
-        if(CameraAnimator.GetBool("IsZoomed"))
-        {
-            StartText.color = new Color(255.0f, 255.0f, 255.0f, 0.0f);
-        }
-        else
-        {
-            if (CameraAnimator.GetBool("ShouldZoom"))
-            {
-                StartText.color = new Color(255.0f, 255.0f, 255.0f, 0.0f);
-            }
-            else
-            {
-                StartText.color = new Color(255.0f, 255.0f, 255.0f, UpdatingAlpha);
-            }
-        }
+        StartText.color = new Color(255.0f, 255.0f, 255.0f, UpdatingAlpha);
 
         // Camera Animations
         if (Input.GetKeyDown("t") && !CameraAnimator.GetBool("IsZoomed"))
         {
             CameraAnimator.SetBool("ShouldZoom", true);
+            StartText.text = EscapeText;
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -84,6 +75,7 @@ public class MainMenuCameraScript : MonoBehaviour {
             TwitterPanel.SetActive(false);
             PINPanel.SetActive(false);
             bIsPinned = false;
+            StartText.text = EnterText;
         }
 
         if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimation") && !CameraAnimator.GetBool("IsZoomed"))
@@ -106,14 +98,19 @@ public class MainMenuCameraScript : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            if (!CameraAnimator.GetBool("IsZoomed") && !bEnteringNewScene)
+            if (!TwitterHandler.bIsReady)
+            {
+                CameraAnimator.SetBool("ShouldZoom", true);
+                StartText.text = EscapeText;
+            }
+            else if (!CameraAnimator.GetBool("IsZoomed") && !bEnteringNewScene && TwitterHandler.bIsReady)
             {
                 UpdatingAlpha = 0.01f;
                 FadeOutImage.color = new Color(0.0f, 0.0f, 0.0f, UpdatingAlpha);
                 bEnteringNewScene = true;
                 bFadeOut = false;
             }
-            else if (CameraAnimator.GetBool("IsZoomed") && !bIsPinned)
+            if (CameraAnimator.GetBool("IsZoomed") && !bIsPinned)
             {
                 LoginButtonClicked();
             }
@@ -155,12 +152,25 @@ public class MainMenuCameraScript : MonoBehaviour {
 
     void AccountEdited(string value)
     {
-        Account = value;
+        if (value != Account)
+        {
+            TwitterHandler.ClearUserInfo();
+            Account = value;
+        }
     }
 
     void PasswordEdited(string value)
     {
-        Password = value;
+        if (value != Password)
+        {
+            TwitterHandler.ClearUserInfo();
+            Password = value;
+        }
+    }
+
+    void OnAccountInfoChanging(string value)
+    {
+        TwitterHandler.ClearUserInfo();
     }
 
     public Text StartText;
@@ -180,6 +190,9 @@ public class MainMenuCameraScript : MonoBehaviour {
     private bool bFadeOut;
     private float UpdatingAlpha;
     private bool bIsPinned;
+
+    private static string EnterText = @"Press ""Enter"" to Start \\n Press ""T"" to Switch Account";
+    private static string EscapeText = @"Press ""Escape"" to back";
 
     private Animator CameraAnimator;
 }

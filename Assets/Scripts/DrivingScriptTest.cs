@@ -45,6 +45,9 @@ public class DrivingScriptTest: MonoBehaviour {
 
 	public float collisionForce; //required force to play collision sound
 	public AudioSource collisionSound;
+	public TwitterTrend currentTrend; //trend being displayed in top-right corner
+	public TwitterObject cornerTweet; //tweet Object that shows up in the top-right corner
+	int tweetNum = 0;
 
 	bool grounded = false; //whether or not the car is on the ground
 	// Use this for initialization
@@ -202,7 +205,28 @@ public class DrivingScriptTest: MonoBehaviour {
 		if (collision.relativeVelocity.magnitude > collisionForce) {
 			AudioSource.PlayClipAtPoint (collisionSound.clip, collision.contacts [0].point);
 			speedCurrent *= 0.6f; //sharp speed reduction upon hitting objects
+			//if colliding with another car, show the associated tweet
+		}
+		if (collision.gameObject.tag == "AICar") {
+			CarAIPathing otherCar = collision.gameObject.GetComponent<CarAIPathing> ();
+			//ensure other car has this script, otherwise ignore
+			if (otherCar != null) {
+				UpdateCorner (otherCar, otherCar.thisTrend);
+			}
+		}
+	}
 
+	void UpdateCorner(CarAIPathing carPathing, TwitterTrend newTrend) {
+		//out with the old and in with the new
+		print ("THAT'S ME IN THE CORNER");
+		if (currentTrend == null || (currentTrend.trendStr != newTrend.trendStr || carPathing.tweetNum != tweetNum)) {
+			currentTrend = newTrend;
+			tweetNum = carPathing.tweetNum;
+			cornerTweet.usernameText.text = currentTrend.trendUsers [tweetNum];
+			cornerTweet.handleText.text = currentTrend.trendHandles [tweetNum];
+			cornerTweet.messageText.text = currentTrend.trendBodies [tweetNum];
+			cornerTweet.numLikes.text = currentTrend.trendLikes [tweetNum].ToString();
+			cornerTweet.numRetweets.text = currentTrend.trendRetweets [tweetNum].ToString ();
 		}
 	}
 }

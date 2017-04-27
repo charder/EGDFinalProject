@@ -12,6 +12,7 @@ public class DrivingScript : MonoBehaviour {
 	float topRotate;
 	float moveDir; //direction of movement (forward/backward for correct driving control)
 	Rigidbody myBody;
+	TwitterTrend showingTweet; //tweet shown in top-right corner when colliding with other car
 
 	bool grounded = false; //whether or not the car is on the ground
 	// Use this for initialization

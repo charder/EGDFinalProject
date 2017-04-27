@@ -82,7 +82,6 @@ public class TwitterObject : MonoBehaviour {
 		else
 		{
 			profImage.texture = www.texture;
-			Debug.Log ("Great Success!");
 		}
 	}
 }
