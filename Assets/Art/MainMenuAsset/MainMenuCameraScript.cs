@@ -14,16 +14,16 @@ public class MainMenuCameraScript : MonoBehaviour {
         TwitterPanel.SetActive(false);
         PINPanel.SetActive(false);
         bIsPinned = false;
+        StartText.text = EnterText;
 
         SetInputField();
         LoginButton.onClick.AddListener(LoginButtonClicked);
         EnterPINButton.onClick.AddListener(EnterPINButtonClicked);
+        RequestButton.onClick.AddListener(RequestAgainButtonClicked);
         AccountInputField.onEndEdit.AddListener(AccountEdited);
         PasswordInputField.onEndEdit.AddListener(PasswordEdited);
         AccountInputField.onValueChanged.AddListener(OnAccountInfoChanging);
         PasswordInputField.onValueChanged.AddListener(OnAccountInfoChanging);
-
-        EnterText.Replace("\\n", "\n");
     }
 	
 	// Update is called once per frame
@@ -75,7 +75,6 @@ public class MainMenuCameraScript : MonoBehaviour {
             TwitterPanel.SetActive(false);
             PINPanel.SetActive(false);
             bIsPinned = false;
-            StartText.text = EnterText;
         }
 
         if (CameraAnimator.GetCurrentAnimatorStateInfo(0).IsName("MainMenuCameraAnimation") && !CameraAnimator.GetBool("IsZoomed"))
@@ -93,17 +92,37 @@ public class MainMenuCameraScript : MonoBehaviour {
             {
                 CameraAnimator.SetBool("IsZoomed", false);
                 TwitterPanel.SetActive(false);
+                StartText.text = EnterText;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (bIsPinned)
+            {
+                PINInputField.ActivateInputField();
+            }
+
+            if (AccountInputField.isFocused)
+            {
+                AccountInputField.DeactivateInputField();
+                PasswordInputField.ActivateInputField();
+            }
+            else
+            {
+                AccountInputField.ActivateInputField();
+                PasswordInputField.DeactivateInputField();
             }
         }
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            if (!TwitterHandler.bIsReady)
+            if (!TwitterHandler.bIsReadyToStart)
             {
                 CameraAnimator.SetBool("ShouldZoom", true);
                 StartText.text = EscapeText;
             }
-            else if (!CameraAnimator.GetBool("IsZoomed") && !bEnteringNewScene && TwitterHandler.bIsReady)
+            else if (!CameraAnimator.GetBool("IsZoomed") && !bEnteringNewScene && TwitterHandler.bIsReadyToStart)
             {
                 UpdatingAlpha = 0.01f;
                 FadeOutImage.color = new Color(0.0f, 0.0f, 0.0f, UpdatingAlpha);
@@ -136,9 +155,22 @@ public class MainMenuCameraScript : MonoBehaviour {
         PINPanel.SetActive(true);
 
         bIsPinned = true;
+
         if (TwitterHandler.urlText.text.Length > 1)
         {
             Application.OpenURL(TwitterHandler.urlText.text);
+        }
+    }
+
+    void RequestAgainButtonClicked()
+    {
+        bIsPinned = true;
+        TwitterHandler.ClearUserInfo();
+        
+        if(TwitterHandler.bIsReadyToStart)
+        {
+            bIsPinned = false;
+            RequestButton.GetComponent<Text>().text = "Request Again";
         }
     }
 
@@ -173,6 +205,11 @@ public class MainMenuCameraScript : MonoBehaviour {
         TwitterHandler.ClearUserInfo();
     }
 
+    public bool GetPinned()
+    {
+        return bIsPinned;
+    }
+
     public Text StartText;
     public Image FadeOutImage;
     public GameObject TwitterPanel;
@@ -180,8 +217,10 @@ public class MainMenuCameraScript : MonoBehaviour {
 
     public Button LoginButton;
     public Button EnterPINButton;
+    public Button RequestButton;
     public InputField AccountInputField;
     public InputField PasswordInputField;
+    public InputField PINInputField;
     public TwitterHandler TwitterHandler;
 
     public string Account { get; set; }
@@ -191,7 +230,8 @@ public class MainMenuCameraScript : MonoBehaviour {
     private float UpdatingAlpha;
     private bool bIsPinned;
 
-    private static string EnterText = @"Press ""Enter"" to Start \\n Press ""T"" to Switch Account";
+    private static string EnterText = @"Press ""Enter"" to Start 
+Press ""T"" to Switch Account";
     private static string EscapeText = @"Press ""Escape"" to back";
 
     private Animator CameraAnimator;
