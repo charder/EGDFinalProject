@@ -11,6 +11,7 @@ public class TwitterObject : MonoBehaviour {
 	public RawImage profImage;
 	public Text numRetweets;
 	public Text numLikes;
+	public RawImage messageImage;
 
 	public string profImageURL;
 
@@ -36,6 +37,16 @@ public class TwitterObject : MonoBehaviour {
 		numLikes.text = likes.ToString ();
 	}
 
+	public void InitializeWP (string username, string handle, string message, Texture2D profileImage, int retweets, int likes, Texture2D messImage){
+		usernameText.text = username;
+		handleText.text = handle;
+		messageText.text = message;
+		profImage.texture = profileImage;
+		numRetweets.text = retweets.ToString ();
+		numLikes.text = likes.ToString ();
+		messageImage.texture = messImage;
+	}
+
 	void Test(){
 		string user = "Caleb Harder";
 		string hand = "@theHardestCaleb";
@@ -43,6 +54,15 @@ public class TwitterObject : MonoBehaviour {
 		int likes = 422;
 		int retweets = 78;
 		Initialize (user, hand, message, tempPic, retweets, likes);
+	}
+
+	void TestWP(){
+		string user = "Caleb Harder";
+		string hand = "@theHardestCaleb";
+		string message = "May I have your attention, please? May I have your attention, please? Will the real Slim Shady please stand up?";
+		int likes = 422;
+		int retweets = 78;
+		InitializeWP (user, hand, message, tempPic, retweets, likes, tempPic);
 	}
 
 	public void LoadProfileImage() {
