@@ -113,7 +113,7 @@ public class TwitterHandler: MonoBehaviour {
         }
         else if (string.IsNullOrEmpty (m_AccessTokenResponse.ScreenName)) {
             // Not logged in, need to log in
-            displayText.GetComponent<Text>().text = "No user is logged in.";
+            displayText.GetComponent<Text>().text = "Please enter PIN below:";
             StartCoroutine(Twitter.API.GetRequestToken(CONSUMER_KEY, CONSUMER_SECRET,
                 new Twitter.RequestTokenCallback(this.OnRequestTokenCallback)));
         }
@@ -167,7 +167,6 @@ public class TwitterHandler: MonoBehaviour {
             PlayerPrefs.SetString(PLAYER_PREFS_TWITTER_USER_TOKEN_SECRET, response.TokenSecret);
 
             MainCamera.AccountInputField.text = PlayerPrefs.GetString(PLAYER_PREFS_TWITTER_USER_SCREEN_NAME);
-            MainCamera.PasswordInputField.text = "********";
         }
         else
         {
@@ -192,14 +191,15 @@ public class TwitterHandler: MonoBehaviour {
 
         if (success) {
             var r = JSON.Parse (results);
-            displayText.GetComponent<Text>().text = "@" + r ["screen_name"] + " was verified!";
+            displayText.GetComponent<Text>().text = "@" + r ["screen_name"] + " is signed in!";
             bIsReadyToStart = true;
             EnterPINButton.SetActive(false);
-            MainCamera.RequestText.text = "Log Out";
+            MainCamera.RequestText.text = "Sign Out";
+            MainCamera.LogOutButtonObject.SetActive(true);
             MainCamera.LoginText.text = "Switch";
         }
         else {
-            displayText.GetComponent<Text>().text = "User could not be verified, please log out.";
+            displayText.GetComponent<Text>().text = "User could not be verified, please sign out.";
         }
     }
 
@@ -278,7 +278,7 @@ public class TwitterHandler: MonoBehaviour {
             statuses.Add (tweets ["statuses"] [i] ["text"]);
         }
 
-        // Stauses is a list of tweets, do stuff with it here
+        // Statuses is a list of tweets, do stuff with it here
 
     }
 
@@ -292,7 +292,7 @@ public class TwitterHandler: MonoBehaviour {
 
     void OnPostTweet(bool success)
     {
-        print("OnPostTweet - " + (success ? "succedded." : "failed."));
+        print("OnPostTweet - " + (success ? "succeeded." : "failed."));
     }
 
     /// //////////////////////////////////////////////////////////////////////////////////////////
@@ -303,7 +303,7 @@ public class TwitterHandler: MonoBehaviour {
     }
 
     void OnPostReply(bool success) {
-        print("OnPostTweet - " + (success ? "succedded." : "failed."));
+        print("OnPostTweet - " + (success ? "succeeded." : "failed."));
     }
 
     /// //////////////////////////////////////////////////////////////////////////////////////////
@@ -314,7 +314,7 @@ public class TwitterHandler: MonoBehaviour {
 
     void OnGetTimeline(bool success, string results)
     {
-        print("OnGetTimeline - " + (success ? "succedded." : "failed."));
+        print("OnGetTimeline - " + (success ? "succeeded." : "failed."));
         var tweets = JSON.Parse(results);
 
 //        for (int i = 0; i < tweets.Count; i++) {
@@ -347,7 +347,7 @@ public class TwitterHandler: MonoBehaviour {
 	}
 
 	void OnPostRetweet(bool success) {
-		print("OnPostRetweet - " + (success ? "succedded." : "failed."));
+		print("OnPostRetweet - " + (success ? "succeeded." : "failed."));
 	}
 
 	/// //////////////////////////////////////////////////////////////////////////////////////////
@@ -357,7 +357,7 @@ public class TwitterHandler: MonoBehaviour {
 	}
 
 	void OnPostFavorite(bool success) {
-		print("OnPostFavorite - " + (success ? "succedded." : "failed. xoxo"));
+		print("OnPostFavorite - " + (success ? "succeeded." : "failed. xoxo"));
 	}
 
 	/// //////////////////////////////////////////////////////////////////////////////////////////
@@ -400,7 +400,7 @@ public class TwitterHandler: MonoBehaviour {
         Debug.Log ("User info cleared");
         bIsReadyToStart = false;
 
-        MainCamera.LoginText.text = "Login";
+        MainCamera.LoginText.text = "Sign In";
 
         handleLogin ();
     }
