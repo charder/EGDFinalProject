@@ -113,7 +113,7 @@ public class TwitterHandler: MonoBehaviour {
         }
         else if (string.IsNullOrEmpty (m_AccessTokenResponse.ScreenName)) {
             // Not logged in, need to log in
-            displayText.GetComponent<Text>().text = "No user is logged in.";
+            displayText.GetComponent<Text>().text = "No user is logged in. Please click the link below or enter it on your mobile device.";
             StartCoroutine(Twitter.API.GetRequestToken(CONSUMER_KEY, CONSUMER_SECRET,
                 new Twitter.RequestTokenCallback(this.OnRequestTokenCallback)));
         }
@@ -430,7 +430,7 @@ public class TwitterHandler: MonoBehaviour {
 
             if (MainCamera.GetPinned() && MainCamera.RequestText.text.Length > 8 && MainCamera.GetPinned())
             {
-                Application.OpenURL(urlText.text);
+                //Application.OpenURL(urlText.text);
             }
         }
         else {
@@ -438,5 +438,9 @@ public class TwitterHandler: MonoBehaviour {
             pinInput.SetActive (false);
             EnterPINButton.SetActive(false);
         }
+    }
+
+    public void OpenURL() {
+        Application.OpenURL (urlText.text);
     }
 }

@@ -173,7 +173,7 @@ public class MainMenuCameraScript : MonoBehaviour {
 
         if (TwitterHandler.urlText.text.Length > 1)
         {
-            Application.OpenURL(TwitterHandler.urlText.text);
+            //Application.OpenURL(TwitterHandler.urlText.text);
         }
     }
 
