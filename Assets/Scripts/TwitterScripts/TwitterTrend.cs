@@ -18,6 +18,7 @@ public class TwitterTrend : MonoBehaviour {
 	public int[] trendLikes;
 	public int[] trendRetweets;
     public Texture2D[] trendProfPics;
+	public string[] trendIDs;
 
 	void Awake () {
 		DontDestroyOnLoad (this.gameObject);
@@ -44,6 +45,7 @@ public class TwitterTrend : MonoBehaviour {
 		trendLikes = new int[50];
 		trendRetweets = new int[50];
         trendProfPics = new Texture2D[50];
+		trendIDs = new string[50];
 	}
 
     public void LoadProfPic(int index) {

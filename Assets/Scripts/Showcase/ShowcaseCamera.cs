@@ -58,8 +58,10 @@ public class ShowcaseCamera : CarDataPassage {
 			showcasePoint = showcaseCenter.transform.position;
 		} else {
 			showcasePoint = showcasePoints[currentShowcase].transform.position;
-            if (!replyText.GetComponent<InputField> ().text.Contains ("@" + showcasePoints [currentShowcase].tweetStuff.tweetHandle + " ")) {
-                replyText.GetComponent<InputField>().text = "@" + showcasePoints [currentShowcase].tweetStuff.tweetHandle + " ";
+			InputField tmpField = replyText.GetComponent<InputField> ();
+			if (!tmpField.text.Contains ("@" + showcasePoints [currentShowcase].tweetStuff.tweetHandle + " ")) {
+				tmpField.text = "@" + showcasePoints [currentShowcase].tweetStuff.tweetHandle + " ";
+				tmpField.caretPosition = tmpField.text.Length;
             }
 		}
 		currentRot = transform.rotation;
@@ -304,13 +306,14 @@ public class ShowcaseCamera : CarDataPassage {
 
 	//Which action is used when the game is started
 	public void PassDataToCar(int option) {
-		TwitterTweetPlus relevantInfo = new TwitterTweetPlus ();
+		GameObject empty = new GameObject ();
+		TwitterPostInfo relevantInfo = empty.AddComponent<TwitterPostInfo> ();
+		DontDestroyOnLoad (empty);
 		relevantInfo.postType = option;
 		switch (option) {
 		//Tweet
 		case 0:
-			print ("ARE WE GETTING HERE?");
-			relevantInfo.carMaterial = carColorOptions [carColor];
+			relevantInfo.tweetBody = createTweetField.text;
 			GameObject playerCarSpawn = (GameObject)Instantiate (playerCars [carModel]);
 			DrivingScriptTest carDrive = playerCarSpawn.GetComponent<DrivingScriptTest> ();
 			MeshRenderer carMesh = playerCarSpawn.GetComponentInChildren<MeshRenderer> ();
@@ -322,12 +325,16 @@ public class ShowcaseCamera : CarDataPassage {
 				updatedMat [0] = carColorOptions [carColor];
 			}
 			carMesh.materials = updatedMat;
-			//ID STUFF
+
+			//carDrive.carData = relevantInfo;
 			DontDestroyOnLoad(playerCarSpawn);
 			SceneManager.LoadScene("ModifiedCity");
 			break;
 		//Retweet
 		case 1:
+			ShowcaseScript currentTweetShow = showcasePoints [currentShowcase].GetComponent<ShowcaseScript> ();
+			TwitterTweetPlus currentTimelineInfo = currentTweetShow.tweetStuff; //gets a reference to the info from the tweet we're dealing with
+			relevantInfo.replyID = currentTimelineInfo.replyID;
 			switch (tweetOptionSelection) {
 			//Like
 			case 0:
@@ -340,8 +347,25 @@ public class ShowcaseCamera : CarDataPassage {
 			//Reply
 			case 2:
 				relevantInfo.postType = 3;
+				relevantInfo.tweetBody = createReplyingField.text;
 				break;
 			}
+			GameObject playerCarLoad = (GameObject)Instantiate (playerCars [currentTweetShow.carModelNum]);
+
+			MeshRenderer carMeshLoad = playerCarLoad.GetComponentInChildren<MeshRenderer> ();
+			//change car color
+			Material[] updatedMatLoad = carMeshLoad.materials;
+			if (carModel == 3) {
+				updatedMatLoad [1] = carColorOptions [currentTweetShow.carColorNum];
+			} else {
+				updatedMatLoad [0] = carColorOptions [currentTweetShow.carColorNum];
+			}
+			carMeshLoad.materials = updatedMatLoad;
+
+			DrivingScriptTest carDriving = playerCarLoad.GetComponent<DrivingScriptTest> ();
+			//carDriving.carData = relevantInfo;
+			DontDestroyOnLoad(playerCarLoad);
+			SceneManager.LoadScene("ModifiedCity");
 			break;
 		}
 	}

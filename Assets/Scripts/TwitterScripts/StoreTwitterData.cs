@@ -169,8 +169,8 @@ public class StoreTwitterData : MonoBehaviour {
 		foreach (var value in trends.Values) {
 			trendValues.Add (value);
 		}
-		twitterTrends = new  TwitterTrend[3];
-		for (int i = 0; i < 3; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 3 TREND ATM
+		twitterTrends = new  TwitterTrend[50];
+		for (int i = 0; i < 50; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 50 TREND ATM
 			GameObject holdMe = new GameObject();
 			TwitterTrend trendMe = holdMe.AddComponent<TwitterTrend> ();
 			twitterTrends [i] = trendMe;
@@ -232,6 +232,7 @@ public class StoreTwitterData : MonoBehaviour {
 			thisTrend.trendPictureURL [i] = (string)tweets ["statuses"] [i] ["user"] ["profile_image_url"];
             //thisTrend.LoadProfPic (i);
 			thisTrend.trendBodies[i] = (string)tweets["statuses"][i]["text"];
+			thisTrend.trendIDs [i] = (string)tweets ["statuses"] [i] ["id_str"];
 			if (tweets ["statuses"] [i] ["retweet_count"].AsInt != null) {
 				thisTrend.trendRetweets [i] = tweets ["statuses"] [i] ["retweet_count"].AsInt;
 			} else {
@@ -319,6 +320,7 @@ public class StoreTwitterData : MonoBehaviour {
 			twitterTimeline [i].tweetHandle = tweets [i] ["user"] ["screen_name"];
 			twitterTimeline [i].tweetBody = tweets [i] ["text"];
 			twitterTimeline [i].tweetPictureURL = tweets [i] ["user"] ["profile_image_url"];
+			twitterTimeline [i].replyID = tweets [i] ["id_str"];
 			if (tweets [i] ["retweet_count"].AsInt != null) {
 				twitterTimeline[i].tweetRetweets = tweets [i] ["retweet_count"].AsInt;
 			} else {
@@ -445,7 +447,8 @@ public class StoreTwitterData : MonoBehaviour {
 	private const string TinyURLCreateURL = "tinyurl.com/api-create.php?url=";
 
 	public static IEnumerator GetTinyUrl(string longurl, TinyURLCallback callback) {
-		WWW web = new WWW( TinyURLCreateURL + longurl, null, null);
+		Dictionary<string, string> headers = new Dictionary<string, string>();
+		WWW web = new WWW( TinyURLCreateURL + longurl, null, headers);
 		yield return web;
 
 		if (!string.IsNullOrEmpty (web.error)) {

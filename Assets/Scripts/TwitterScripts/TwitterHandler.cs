@@ -410,7 +410,8 @@ public class TwitterHandler: MonoBehaviour {
     private const string TinyURLCreateURL = "tinyurl.com/api-create.php?url=";
 
     public static IEnumerator GetTinyUrl(string longurl, TinyURLCallback callback) {
-        WWW web = new WWW( TinyURLCreateURL + longurl, null, null);
+		Dictionary<string, string> headers = new Dictionary<string, string>();
+		WWW web = new WWW( TinyURLCreateURL + longurl, null, headers);
         yield return web;
 
         if (!string.IsNullOrEmpty (web.error)) {

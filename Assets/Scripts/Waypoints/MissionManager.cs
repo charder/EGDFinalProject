@@ -113,5 +113,6 @@ public class MissionManager : MonoBehaviour {
 		remainingTime.text = timerTimeRemaining.ToString ("F2");
 		turnOffOverlayTime = Time.time + 5f;
 		overlayOn = true;
+		FindObjectOfType<TwitterPostInfo> ().PostToTwitter ();
 	}
 }
