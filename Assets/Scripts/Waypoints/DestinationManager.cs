@@ -8,6 +8,7 @@ public class DestinationManager : MonoBehaviour {
 	public Goal goal;
 
 	public MissionManager mm;
+	public int goalTime; //the time this destination should take
 
 	// Use this for initialization
 	void Start () {

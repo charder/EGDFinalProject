@@ -37,16 +37,16 @@ public class DestinationSign : MonoBehaviour {
 			favorite.SetActive (false);
 
 			state = newState;
-			if (state == 0) {
-				WIFI.SetActive (true);
-			} else if (state == 1) {
+			if (state == 1) {
 				tweet.SetActive (true);
 			} else if (state == 2) {
-				retweet.SetActive (true);
+				favorite.SetActive (true);
 			} else if (state == 3) {
+				retweet.SetActive (true);
+			} else if (state == 4) {
 				reply.SetActive (true);
 			} else {
-				favorite.SetActive (true);
+				WIFI.SetActive (true);
 			}
 		}
 	}

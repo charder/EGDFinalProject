@@ -16,7 +16,12 @@ public class StartLine : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.tag == "Player") {
-			FindObjectOfType<MissionManager> ().StartMission (4);
+			int missionType = FindObjectOfType<TwitterPostInfo> ().postType + 1;
+			//1 = Tweet
+			//2 = Like
+			//3 = Retweet
+			//4 = Reply
+			FindObjectOfType<MissionManager> ().StartMission (missionType);
 			gameObject.SetActive (false);
 		}
 	}

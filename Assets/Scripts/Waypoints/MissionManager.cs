@@ -90,7 +90,7 @@ public class MissionManager : MonoBehaviour {
 			navArrow.SetActive (true);
 			destinations [dIndex].Set (type);
 			timerStartTime = Time.time;
-			timerTimeRemaining = missionTimes [dIndex];
+			timerTimeRemaining = destinations [dIndex].GetComponent<DestinationManager> ().goalTime;
 		}
 	}
 

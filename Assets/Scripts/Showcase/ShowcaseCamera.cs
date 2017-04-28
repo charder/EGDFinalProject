@@ -81,6 +81,7 @@ public class ShowcaseCamera : CarDataPassage {
 		//Handle moving around the showcase (moveTime is a delay for moving between timeline points)
 		if (!creatingTweet) {
 			if (!createReplyingField.isFocused) {
+				/*
 				//Switch to creating new tweet
 				if (Input.GetKey (KeyCode.Q)) {
 					if (ManageMovement ()) {
@@ -125,6 +126,7 @@ public class ShowcaseCamera : CarDataPassage {
 						tweetOptionCovers [tweetOptionSelection].SetActive (false);
 					}
 				}
+				*/
 				if (Input.GetKey (KeyCode.Tab)) {
 					if (ManageMovement ()) {
 						EventSystem.current.SetSelectedGameObject (createReplyingField.gameObject, null);
@@ -139,6 +141,7 @@ public class ShowcaseCamera : CarDataPassage {
 			}
 		} else {
 			if (!createTweetField.isFocused) {
+				/*
 				if (Input.GetKey (KeyCode.Q)) {
 					if (ManageMovement ()) {
 						creatingTweet = false;
@@ -180,6 +183,7 @@ public class ShowcaseCamera : CarDataPassage {
 						changeCar ();
 					}
 				}
+				*/
 				if (Input.GetKey (KeyCode.Tab)) {
 					if (ManageMovement ()) {
 						EventSystem.current.SetSelectedGameObject (createTweetField.gameObject, null);
