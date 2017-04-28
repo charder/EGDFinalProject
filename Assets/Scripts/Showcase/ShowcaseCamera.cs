@@ -355,7 +355,7 @@ public class ShowcaseCamera : CarDataPassage {
 			MeshRenderer carMeshLoad = playerCarLoad.GetComponentInChildren<MeshRenderer> ();
 			//change car color
 			Material[] updatedMatLoad = carMeshLoad.materials;
-			if (carModel == 3) {
+			if (currentTweetShow.carModelNum == 3) {
 				updatedMatLoad [1] = carColorOptions [currentTweetShow.carColorNum];
 			} else {
 				updatedMatLoad [0] = carColorOptions [currentTweetShow.carColorNum];

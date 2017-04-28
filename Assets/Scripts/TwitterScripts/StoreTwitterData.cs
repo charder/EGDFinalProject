@@ -169,8 +169,8 @@ public class StoreTwitterData : MonoBehaviour {
 		foreach (var value in trends.Values) {
 			trendValues.Add (value);
 		}
-		twitterTrends = new  TwitterTrend[50];
-		for (int i = 0; i < 50; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 50 TREND ATM
+		twitterTrends = new  TwitterTrend[5];
+		for (int i = 0; i < 5; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 5 TRENDS ATM
 			GameObject holdMe = new GameObject();
 			TwitterTrend trendMe = holdMe.AddComponent<TwitterTrend> ();
 			twitterTrends [i] = trendMe;

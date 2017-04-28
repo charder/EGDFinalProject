@@ -234,7 +234,7 @@ public class DrivingScriptTest: MonoBehaviour {
 			currentTrend = newTrend;
 			tweetNum = carPathing.tweetNum;
 			cornerTweet.usernameText.text = currentTrend.trendUsers [tweetNum];
-			cornerTweet.handleText.text = currentTrend.trendHandles [tweetNum];
+			cornerTweet.handleText.text = "@" + currentTrend.trendHandles [tweetNum];
 			cornerTweet.messageText.text = currentTrend.trendBodies [tweetNum];
 			cornerTweet.numLikes.text = currentTrend.trendLikes [tweetNum].ToString();
 			cornerTweet.numRetweets.text = currentTrend.trendRetweets [tweetNum].ToString ();
