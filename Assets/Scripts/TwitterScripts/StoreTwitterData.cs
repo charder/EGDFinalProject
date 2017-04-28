@@ -15,7 +15,7 @@ public class StoreTwitterData : MonoBehaviour {
 	public Dictionary<string, int> trends;
 	public TwitterTrend[] twitterTrends; //all information about trending topics
 
-	public TwitterTweetPlus[] twitterTimeline;
+	public TwitterTweetPlus[] twitterTimeline = null;
 
 
 	// You need to save access token and secret for later use.
@@ -37,8 +37,8 @@ public class StoreTwitterData : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		print (FindObjectsOfType<StoreTwitterData> ().Length);
-
+		LoadTwitterUserInfo ();
+		/*
 		if (!created && FindObjectsOfType<StoreTwitterData>().Length == 1) {
 			DontDestroyOnLoad (transform.gameObject);
 			LoadTwitterUserInfo ();
@@ -46,10 +46,26 @@ public class StoreTwitterData : MonoBehaviour {
 			StartGetTrends ();
 			StartGetTimeline ();
 			created = true;
-		} else if (!created) {
-			Destroy (this.gameObject);
 		}
+		*/
 
+	}
+
+	public void loadTrendData() {
+		LoadTwitterUserInfo ();
+		twitterHandler = this.gameObject;
+		StartGetTrends ();
+	}
+
+	public void loadTimeline() {
+		LoadTwitterUserInfo ();
+		if (twitterTimeline != null) {
+			for (int i = 0; i < twitterTimeline.Length; i++) {
+				Destroy(twitterTimeline[i].gameObject);
+			}
+		}
+		twitterHandler = this.gameObject;
+		StartGetTimeline ();
 	}
 
 	// Update is called once per frame
@@ -169,8 +185,8 @@ public class StoreTwitterData : MonoBehaviour {
 		foreach (var value in trends.Values) {
 			trendValues.Add (value);
 		}
-		twitterTrends = new  TwitterTrend[5];
-		for (int i = 0; i < 5; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 5 TRENDS ATM
+		twitterTrends = new  TwitterTrend[40];
+		for (int i = 0; i < 40; i++) { //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ONLY DOING 40 TRENDS ATM
 			GameObject holdMe = new GameObject();
 			TwitterTrend trendMe = holdMe.AddComponent<TwitterTrend> ();
 			twitterTrends [i] = trendMe;

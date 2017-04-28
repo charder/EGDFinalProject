@@ -22,6 +22,7 @@ public class ShowcaseCamera : CarDataPassage {
 
 	public GameObject createTweetUI;
 	public GameObject createResponseUI;
+	public GameObject loadUI;
 	InputField createTweetField; //input field used for writing a tweet, need reference for easier checking
 	InputField createReplyingField; //input field used for replying
 	bool activeTweetText; //whether or not the player is editing the text
@@ -34,6 +35,7 @@ public class ShowcaseCamera : CarDataPassage {
 
 
     public GameObject replyText = null;
+	float loadTime = 2f; //time before the game gets off of a loading image to prevent the user from witnessing a lagfest
 
 	// Use this for initialization
 	void Start () {
@@ -42,6 +44,9 @@ public class ShowcaseCamera : CarDataPassage {
 		createTweetField = createTweetUI.GetComponentInChildren<InputField>();
 		createReplyingField = createResponseUI.GetComponentInChildren<InputField> ();
 		createTweetUI.SetActive (false);
+		createResponseUI.SetActive (false);
+		loadUI.SetActive (true);
+
 
 		twitDatRef = FindObjectOfType<StoreTwitterData> (); 
 
@@ -52,36 +57,37 @@ public class ShowcaseCamera : CarDataPassage {
 	
 	// Update is called once per frame
 	void Update () {
-		//Gross way of finding new quaternion to look towards
-		Vector3 showcasePoint;
-		if (creatingTweet) {
-			showcasePoint = showcaseCenter.transform.position;
-		} else {
-			showcasePoint = showcasePoints[currentShowcase].transform.position;
-			InputField tmpField = replyText.GetComponent<InputField> ();
-			if (!tmpField.text.Contains ("@" + showcasePoints [currentShowcase].tweetStuff.tweetHandle + " ")) {
-				tmpField.text = "@" + showcasePoints [currentShowcase].tweetStuff.tweetHandle + " ";
-				tmpField.caretPosition = tmpField.text.Length;
-            }
-		}
-		currentRot = transform.rotation;
-		transform.LookAt (showcasePoint);
-		Quaternion newRot = transform.rotation;
-		transform.rotation = currentRot;
-		transform.rotation = Quaternion.Lerp (newRot, currentRot, moveTime/moveSeconds);
-		//transform.rotation = Quaternion.RotateTowards (currentRot, newRot, 45 * Time.deltaTime);
-		Vector3 newPoint;
-		if (creatingTweet) {
-			newPoint = showcasePoint + showcaseCenter.transform.right * 35 + showcaseCenter.transform.up * 10;
-		} else {
-			newPoint = showcasePoint + showcasePoints[currentShowcase].transform.right * 35 + showcasePoints[currentShowcase].transform.up * 10;
-		}
-		transform.position += (newPoint - transform.position) / moveSeconds * Time.deltaTime;
+		if (loadTime <= 0) {
+			//Gross way of finding new quaternion to look towards
+			Vector3 showcasePoint;
+			if (creatingTweet) {
+				showcasePoint = showcaseCenter.transform.position;
+			} else {
+				showcasePoint = showcasePoints [currentShowcase].transform.position;
+				InputField tmpField = replyText.GetComponent<InputField> ();
+				if (!tmpField.text.Contains ("@" + showcasePoints [currentShowcase].tweetStuff.tweetHandle + " ")) {
+					tmpField.text = "@" + showcasePoints [currentShowcase].tweetStuff.tweetHandle + " ";
+					tmpField.caretPosition = tmpField.text.Length;
+				}
+			}
+			currentRot = transform.rotation;
+			transform.LookAt (showcasePoint);
+			Quaternion newRot = transform.rotation;
+			transform.rotation = currentRot;
+			transform.rotation = Quaternion.Lerp (newRot, currentRot, moveTime / moveSeconds);
+			//transform.rotation = Quaternion.RotateTowards (currentRot, newRot, 45 * Time.deltaTime);
+			Vector3 newPoint;
+			if (creatingTweet) {
+				newPoint = showcasePoint + showcaseCenter.transform.right * 35 + showcaseCenter.transform.up * 10;
+			} else {
+				newPoint = showcasePoint + showcasePoints [currentShowcase].transform.right * 35 + showcasePoints [currentShowcase].transform.up * 10;
+			}
+			transform.position += (newPoint - transform.position) / moveSeconds * Time.deltaTime;
 
-		//Handle moving around the showcase (moveTime is a delay for moving between timeline points)
-		if (!creatingTweet) {
-			if (!createReplyingField.isFocused) {
-				/*
+			//Handle moving around the showcase (moveTime is a delay for moving between timeline points)
+			if (!creatingTweet) {
+				if (!createReplyingField.isFocused) {
+					/*
 				//Switch to creating new tweet
 				if (Input.GetKey (KeyCode.Q)) {
 					if (ManageMovement ()) {
@@ -127,21 +133,21 @@ public class ShowcaseCamera : CarDataPassage {
 					}
 				}
 				*/
-				if (Input.GetKey (KeyCode.Tab)) {
-					if (ManageMovement ()) {
-						EventSystem.current.SetSelectedGameObject (createReplyingField.gameObject, null);
+					if (Input.GetKey (KeyCode.Tab)) {
+						if (ManageMovement ()) {
+							EventSystem.current.SetSelectedGameObject (createReplyingField.gameObject, null);
+						}
+					}
+				} else {
+					if (Input.GetKey (KeyCode.Tab)) {
+						if (ManageMovement ()) {
+							EventSystem.current.SetSelectedGameObject (null, null);
+						}
 					}
 				}
 			} else {
-				if (Input.GetKey (KeyCode.Tab)) {
-					if (ManageMovement ()) {
-						EventSystem.current.SetSelectedGameObject (null, null);
-					}
-				}
-			}
-		} else {
-			if (!createTweetField.isFocused) {
-				/*
+				if (!createTweetField.isFocused) {
+					/*
 				if (Input.GetKey (KeyCode.Q)) {
 					if (ManageMovement ()) {
 						creatingTweet = false;
@@ -184,31 +190,40 @@ public class ShowcaseCamera : CarDataPassage {
 					}
 				}
 				*/
-				if (Input.GetKey (KeyCode.Tab)) {
-					if (ManageMovement ()) {
-						EventSystem.current.SetSelectedGameObject (createTweetField.gameObject, null);
+					if (Input.GetKey (KeyCode.Tab)) {
+						if (ManageMovement ()) {
+							EventSystem.current.SetSelectedGameObject (createTweetField.gameObject, null);
+						}
+					}
+				} else {
+					if (Input.GetKey (KeyCode.Tab)) {
+						if (ManageMovement ()) {
+							EventSystem.current.SetSelectedGameObject (null, null);
+						}
 					}
 				}
-			} else {
-				if (Input.GetKey (KeyCode.Tab)) {
-					if (ManageMovement ()) {
-						EventSystem.current.SetSelectedGameObject (null, null);
-					}
-				}
-			}
 
-			//Color and Model update on the car
-			MeshRenderer carMesh = showcaseCenter.myVehicle.GetComponent<MeshRenderer>();
-			Material[] newMats = carMesh.materials;
-			if (newMats [0].name == "CarBumper (Instance)") {
-				newMats [1] = carColorOptions [carColor];
-			} else {
-				newMats [0] = carColorOptions [carColor];
+				//Color and Model update on the car
+				MeshRenderer carMesh = showcaseCenter.myVehicle.GetComponent<MeshRenderer> ();
+				Material[] newMats = carMesh.materials;
+				if (newMats [0].name == "CarBumper (Instance)") {
+					newMats [1] = carColorOptions [carColor];
+				} else {
+					newMats [0] = carColorOptions [carColor];
+				}
+				carMesh.materials = newMats;
 			}
-			carMesh.materials = newMats;
-		}
-		if (moveTime > 0) {
-			moveTime -= Time.deltaTime;
+			if (moveTime > 0) {
+				moveTime -= Time.deltaTime;
+			}
+		} 
+		//LOADING STUFF <<<<<<<<<<<<<<<
+		else {
+			loadTime -= Time.deltaTime;
+			if (loadTime <= 0) {
+				loadUI.SetActive (false);
+				createResponseUI.SetActive(true);
+			}
 		}
 	}
 
@@ -311,8 +326,7 @@ public class ShowcaseCamera : CarDataPassage {
 	//Which action is used when the game is started
 	public void PassDataToCar(int option) {
 		GameObject empty = new GameObject ();
-		TwitterPostInfo relevantInfo = empty.AddComponent<TwitterPostInfo> ();
-		DontDestroyOnLoad (empty);
+		TwitterPostInfo relevantInfo = FindObjectOfType<TwitterPostInfo> ();
 		relevantInfo.postType = option;
 		switch (option) {
 		//Tweet
